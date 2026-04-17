@@ -3,7 +3,6 @@
     
     <!-- Premium Course Hero -->
     <div class="bg-gray-900 text-white relative overflow-hidden">
-      <!-- Abstract Background -->
       <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
       <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"></div>
       <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
@@ -19,7 +18,7 @@
              <span class="text-xs font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
           </div>
           <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
-          <p class="text-gray-400 mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, and community discussions.</p>
+          <p class="text-gray-400 mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
         </div>
 
         <!-- Enrollment Card -->
@@ -118,8 +117,9 @@
                               <span class="text-sm font-bold truncate leading-tight">{{ note.subject_name }}</span>
                               <span class="text-[10px] uppercase font-bold opacity-70 tracking-widest mt-0.5 flex items-center">
                                  <svg v-if="note.content" class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                                 <svg v-else-if="note.file_url && note.file_url.endsWith('.mp4')" class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                  <svg v-else class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                 {{ note.content ? 'Reading' : 'Document' }}
+                                 {{ note.content ? 'Reading' : (note.file_url && note.file_url.endsWith('.mp4') ? 'Video Lesson' : 'Document') }}
                               </span>
                            </div>
                         </button>
@@ -149,47 +149,78 @@
 
                <div v-else class="flex flex-col h-full">
                   <!-- Lesson Header -->
-                  <div class="p-8 lg:p-10 border-b border-gray-100">
-                     <div class="flex items-center gap-3 mb-4">
-                        <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
-                        <span v-if="selectedTopic.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                  <div class="p-8 lg:p-10 border-b border-gray-100 flex justify-between items-start">
+                     <div>
+                        <div class="flex items-center gap-3 mb-4">
+                           <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
+                           <span v-if="selectedTopic.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                        </div>
+                        <h1 class="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
                      </div>
-                     <h1 class="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
+                     
+                     <div class="flex items-center">
+                         <!-- Edit Button for Admins -->
+                         <button v-if="user?.role === 'admin'" @click="$router.push(`/edit-content/${selectedTopic.id}`)" class="text-blue-400 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 p-2.5 rounded-xl transition-colors shadow-sm mr-2" title="Edit Lesson">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                         </button>
+
+                         <!-- Delete Button for Admins -->
+                         <button v-if="user?.role === 'admin'" @click="handleDelete(selectedTopic.id)" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-colors shadow-sm" title="Delete Lesson">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                         </button>
+                     </div>
                   </div>
 
-                  <!-- Rich Text Area (Using standard CSS) -->
-                  <div class="flex-grow p-8 lg:p-10 overflow-y-auto custom-scrollbar">
+                  <!-- Content Area -->
+                  <div class="flex-grow p-8 lg:p-10 overflow-y-auto custom-scrollbar bg-gray-50/30">
                      
-                     <div v-if="selectedTopic.content" class="rich-text-container" v-html="selectedTopic.content"></div>
+                     <!-- Rich Text Content -->
+                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 rounded-2xl border border-gray-100 shadow-sm" v-html="selectedTopic.content"></div>
                      
-                     <div v-else-if="selectedTopic.file_url" class="text-center py-10 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50">
-                        <div class="text-5xl mb-4">📄</div>
+                     <!-- VIDEO PLAYER INTEGRATION -->
+                     <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-6 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
+                        <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                           <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+                           <span class="text-[10px] font-black uppercase tracking-widest">Live Tracking Active</span>
+                        </div>
+                        <video 
+                           controls 
+                           controlsList="nodownload"
+                           class="w-full max-h-[60vh] object-contain"
+                           :src="selectedTopic.file_url"
+                           @timeupdate="handleVideoProgress($event, selectedTopic.id)"
+                        ></video>
+                     </div>
+
+                     <!-- PDF Document Viewer Fallback -->
+                     <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-12 border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50">
+                        <div class="text-6xl mb-4">📄</div>
                         <h3 class="text-xl font-black text-gray-800">Document Lesson</h3>
-                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson relies on external documentation. Please download or view the supplementary material below.</p>
+                        <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson utilizes a supplementary PDF document. Please download to view.</p>
                      </div>
                      
-                     <div v-if="selectedTopic.file_url" class="mt-12 bg-blue-50/50 border border-blue-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                     <!-- Download Button (for non-video files) -->
+                     <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-10 bg-white border border-blue-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
                         <div class="flex items-center gap-4">
-                           <div class="w-12 h-12 bg-white rounded-xl text-blue-600 flex items-center justify-center text-2xl shadow-sm border border-blue-50">📎</div>
+                           <div class="w-12 h-12 bg-blue-50 rounded-xl text-blue-600 flex items-center justify-center text-2xl shadow-inner border border-blue-100">📎</div>
                            <div>
                               <p class="font-black text-gray-900 text-sm">Supplementary Material</p>
                               <p class="text-xs text-gray-500 font-bold mt-0.5">PDF Document Attachment</p>
                            </div>
                         </div>
-                        <a :href="selectedTopic.file_url" target="_blank" @click="trackDownload(selectedTopic.id)" class="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-black transition-colors shadow-lg">
+                        <a :href="selectedTopic.file_url" target="_blank" @click="trackDownload(selectedTopic.id)" class="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black transition-colors shadow-lg shadow-blue-600/20">
                            Download File
                         </a>
                      </div>
                   </div>
 
-                  <div class="p-6 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                     <button @click="markComplete" :class="isCompleted ? 'text-green-600' : 'text-gray-400 hover:text-blue-600'" class="flex items-center font-black text-sm uppercase tracking-widest transition-colors">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        {{ isCompleted ? 'Completed' : 'Mark as Complete' }}
+                  <div class="p-6 border-t border-gray-100 bg-white flex justify-between items-center z-10">
+                     <button @click="markComplete" :class="isCompleted ? 'text-green-600 bg-green-50' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 bg-gray-50 border border-gray-200'" class="flex items-center font-black text-xs uppercase tracking-widest transition-all px-4 py-3 rounded-xl">
+                        <svg v-if="isCompleted" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <svg v-else class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {{ isCompleted ? 'Lesson Completed' : 'Mark as Complete' }}
                      </button>
-                     <div class="flex gap-2">
-                        <button @click="nextLesson" class="bg-gray-900 text-white px-6 py-3 rounded-xl font-black text-sm hover:bg-blue-600 transition-colors shadow-md">Next Lesson &rarr;</button>
-                     </div>
+                     <button @click="nextLesson" class="bg-gray-900 text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl hover:-translate-y-0.5">Next Lesson &rarr;</button>
                   </div>
                </div>
 
@@ -199,6 +230,7 @@
 
       <!-- DISCUSSIONS TAB -->
       <div v-if="activeTab === 'discussion'" class="animate-in fade-in duration-500 max-w-4xl mx-auto">
+         <!-- Keep standard discussion layout -->
          <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 overflow-hidden flex flex-col h-[75vh]">
             <div class="p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
                <div>
@@ -271,7 +303,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, computed, nextTick, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
 
@@ -354,7 +386,7 @@ const markComplete = async () => {
    if(!selectedTopic.value || !user.value) return;
    if(!isCompleted.value) {
       completedLessons.value.push(selectedTopic.value.id);
-      await trackDownload(selectedTopic.value.id);
+      await trackDownload(selectedTopic.value.id); // Triggers progress on backend
    }
 };
 
@@ -388,6 +420,44 @@ const sendMessage = async () => {
 
 const trackDownload = async (id) => { if (user.value) await api.recordProgress(id); };
 
+// --- FEATURE 2: VIDEO PROGRESS TRACKING ---
+let lastLoggedPercent = 0;
+watch(selectedTopic, () => { lastLoggedPercent = 0; }); // Reset tracker when video changes
+
+const handleVideoProgress = async (e, noteId) => {
+   if(!user.value) return;
+   const video = e.target;
+   if(!video.duration) return;
+   
+   const percent = Math.floor((video.currentTime / video.duration) * 100);
+   
+   // Ping backend every 10% watched
+   if(percent > lastLoggedPercent + 10 || percent === 100) {
+      lastLoggedPercent = percent;
+      try {
+         await api.recordVideoProgress(noteId, { progress_percent: percent });
+         
+         // Auto-complete lesson if they watched > 90%
+         if(percent > 90 && !isCompleted.value) {
+            markComplete();
+         }
+      } catch(err) { console.error('Tracking issue', err); }
+   }
+};
+
+// --- ADMIN FEATURES ---
+const handleDelete = async (noteId) => {
+  if (!confirm("Are you sure you want to delete this lesson? This cannot be undone.")) return;
+  try {
+    await api.deleteNote(noteId);
+    notes.value = notes.value.filter(n => n.id !== noteId);
+    if(selectedTopic.value?.id === noteId) selectedTopic.value = null;
+    alert("Lesson deleted successfully.");
+  } catch (err) {
+    alert("Failed to delete. You might not have permission.");
+  }
+};
+
 onMounted(() => {
   const saved = localStorage.getItem('user');
   if (saved) user.value = JSON.parse(saved);
@@ -415,14 +485,7 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 /* ERROR-FREE RAW CSS FOR RICH TEXT */
-.rich-text-container {
-   color: #374151;
-   line-height: 1.7;
-   max-width: 56rem;
-   margin-left: auto;
-   margin-right: auto;
-   font-size: 16px;
-}
+.rich-text-container { color: #374151; line-height: 1.7; max-width: 56rem; margin-left: auto; margin-right: auto; font-size: 16px; }
 .rich-text-container :deep(h1) { font-size: 2.25rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; }
 .rich-text-container :deep(h2) { font-size: 1.5rem; font-weight: 800; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; }
 .rich-text-container :deep(h3) { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.75rem; margin-top: 1.25rem; }

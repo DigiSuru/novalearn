@@ -5,8 +5,8 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const PDFDocument = require('pdfkit'); // NEW: For Certificates
-const Stripe = require('stripe');      // NEW: For Payments
+const PDFDocument = require('pdfkit'); 
+const Stripe = require('stripe');      
 require('dotenv').config();
 
 const db = require('./config/db');
@@ -27,7 +27,7 @@ if (!fs.existsSync('./uploads')) {
 }
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- Multer Configuration (Now allows MP4 Video files) ---
+// --- Multer Configuration ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, './uploads/'),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -97,6 +97,23 @@ app.post('/api/auth/register', async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
+app.post('/api/auth/register-admin', async (req, res) => {
+    try {
+        const { name, email, password, admin_secret } = req.body;
+        const expectedSecret = process.env.ADMIN_SECRET || 'supersecret123';
+        if (admin_secret !== expectedSecret) {
+            return res.status(403).json({ success: false, message: "Invalid Admin Secret Code." });
+        }
+
+        const [exists] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+        if (exists.length > 0) return res.status(400).json({ success: false, message: "Email already registered." });
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.query("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')", [name, email, hashedPassword]);
+        res.json({ success: true, message: "Admin Vault created successfully!" });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -131,7 +148,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         await db.query("UPDATE users SET reset_token = ?, reset_expiry = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE email = ?", [resetCode, email]);
         
         res.json({ success: true, message: "Recovery code generated.", mockCode: resetCode });
-    } catch (error) { res.status(500).json({ success: false, message: "Server error." }); }
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/auth/reset-password', async (req, res) => {
@@ -145,11 +162,11 @@ app.post('/api/auth/reset-password', async (req, res) => {
         await db.query("UPDATE users SET password = ?, reset_token = NULL, reset_expiry = NULL WHERE email = ?", [hashedPassword, email]);
         
         res.json({ success: true, message: "Password updated successfully!" });
-    } catch (error) { res.status(500).json({ success: false, message: "Server error." }); }
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 // ==========================================
-// 3. STUDENT WORKSPACE, PROGRESS & LEADERBOARD
+// 3. STUDENT WORKSPACE & PROGRESS
 // ==========================================
 
 app.put('/api/user/profile', verifyToken, upload.single('profile_photo'), async (req, res) => {
@@ -163,7 +180,7 @@ app.put('/api/user/profile', verifyToken, upload.single('profile_photo'), async 
         if (phone !== undefined) { updateFields.push("phone = ?"); queryParams.push(phone); }
         if (req.file) {
             updateFields.push("profile_photo_url = ?");
-            queryParams.push(`http://localhost:5000/uploads/${req.file.filename}`);
+            queryParams.push(`${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`);
         }
 
         if (updateFields.length > 0) {
@@ -172,15 +189,6 @@ app.put('/api/user/profile', verifyToken, upload.single('profile_photo'), async 
         }
 
         const [users] = await db.query("SELECT id, name, email, role, is_pro, profile_photo_url, bio, phone FROM users WHERE id = ?", [userId]);
-        res.json({ success: true, user: users[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
-});
-
-// LEGACY MOCK UPGRADE (Kept for fallback)
-app.post('/api/user/upgrade', verifyToken, async (req, res) => {
-    try {
-        await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
-        const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
         res.json({ success: true, user: users[0] });
     } catch (error) { res.status(500).json({ success: false }); }
 });
@@ -231,22 +239,16 @@ app.post('/api/user/progress/:noteId', verifyToken, async (req, res) => {
     } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// FEATURE 2: RECORD VIDEO PROGRESS
 app.post('/api/user/video-progress/:noteId', verifyToken, async (req, res) => {
     try {
         const { progress_percent } = req.body;
-        // Insert progress or update it if the new percentage is higher
         await db.query(`
             INSERT INTO user_progress (user_id, note_id, watch_percent)
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE watch_percent = GREATEST(watch_percent, ?)
         `, [req.user.id, req.params.noteId, progress_percent, progress_percent]);
-        
         res.json({ success: true });
-    } catch (error) { 
-        console.error(error);
-        res.status(500).json({ success: false }); 
-    }
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.get('/api/leaderboard', async (req, res) => {
@@ -324,24 +326,29 @@ app.get('/api/user/assessments/history', verifyToken, async (req, res) => {
 });
 
 // ==========================================
-// 5. NEW ADVANCED FEATURES: STRIPE & CERTIFICATES
+// 5. STRIPE PAYMENTS & CERTIFICATES
 // ==========================================
 
-// FEATURE 1: STRIPE PAYMENTS
+app.post('/api/user/upgrade', verifyToken, async (req, res) => {
+    try {
+        await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
+        const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
+        res.json({ success: true, user: users[0] });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
 app.post('/api/payments/create-checkout-session', verifyToken, async (req, res) => {
     try {
-        // If no real stripe key is set, we return a mock session for local testing
         if (!process.env.STRIPE_SECRET_KEY) {
             return res.json({ success: true, sessionId: 'mock_session_123', url: '/pricing?success=true' });
         }
-
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
                     currency: 'inr',
                     product_data: { name: 'NovaLearn Pro Elite - 1 Year' },
-                    unit_amount: 49900, // Amount in paise (₹499.00)
+                    unit_amount: 49900,
                 },
                 quantity: 1,
             }],
@@ -350,54 +357,46 @@ app.post('/api/payments/create-checkout-session', verifyToken, async (req, res) 
             cancel_url: `http://localhost:5173/pricing?canceled=true`,
             client_reference_id: req.user.id.toString()
         });
-
         res.json({ success: true, sessionId: session.id, url: session.url });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Payment checkout failed" });
-    }
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
 app.post('/api/payments/verify', verifyToken, async (req, res) => {
     try {
-        const { session_id } = req.body;
-        
-        // In production: Verify session_id with Stripe. For now, we grant access if hit.
         await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
         const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
-        
         res.json({ success: true, user: users[0] });
-    } catch (error) {
-        res.status(500).json({ success: false });
-    }
+    } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// FEATURE 3: PDF CERTIFICATE GENERATION
+app.get('/api/user/certificates', verifyToken, async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT c.id, c.issued_at, co.course_name, co.short_name 
+            FROM certificates c 
+            JOIN courses co ON c.course_id = co.id 
+            WHERE c.user_id = ? ORDER BY c.issued_at DESC
+        `, [req.user.id]);
+        res.json({ success: true, data: rows });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
 app.post('/api/courses/:id/certificate', verifyToken, async (req, res) => {
     try {
-        const userId = req.user.id;
-        const courseId = req.params.id;
-
-        // Verify the user exists and the course exists
+        const userId = req.user.id, courseId = req.params.id;
         const [users] = await db.query("SELECT name FROM users WHERE id = ?", [userId]);
         const [courses] = await db.query("SELECT course_name FROM courses WHERE id = ?", [courseId]);
 
         if (!users.length || !courses.length) return res.status(404).json({ message: "Data not found" });
 
-        // Record certificate generation in DB (Optional tracking)
         await db.query("INSERT IGNORE INTO certificates (user_id, course_id) VALUES (?, ?)", [userId, courseId]);
 
-        // Generate PDF on the fly
         const doc = new PDFDocument({ layout: 'landscape', size: 'A4' });
-
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Certificate_${courseId}.pdf`);
         doc.pipe(res);
 
-        // Draw Certificate Layout
         doc.rect(0, 0, doc.page.width, doc.page.height).fill('#ffffff');
-        
-        // Add a beautiful border
         doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40).strokeColor('#1d4ed8').lineWidth(4).stroke();
 
         doc.moveDown(3);
@@ -405,26 +404,17 @@ app.post('/api/courses/:id/certificate', verifyToken, async (req, res) => {
         doc.moveDown();
         doc.fontSize(20).fillColor('#374151').text('This is proudly presented to', { align: 'center' });
         doc.moveDown();
-        
-        // Student Name
         doc.fontSize(40).fillColor('#111827').text(users[0].name, { align: 'center', underline: true });
         doc.moveDown();
-        
         doc.fontSize(20).fillColor('#6b7280').text(`For successfully mastering the curriculum of`, { align: 'center' });
         doc.moveDown();
-        
-        // Course Name
         doc.fontSize(30).fillColor('#1d4ed8').text(courses[0].course_name, { align: 'center' });
         doc.moveDown(3);
-        
         doc.fontSize(15).fillColor('#9ca3af').text(`Issued on: ${new Date().toLocaleDateString()}`, { align: 'center' });
         doc.fontSize(15).fillColor('#9ca3af').text(`NovaLearn Academic Validation System`, { align: 'center' });
 
-        doc.end(); // Finalize PDF
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error generating certificate");
-    }
+        doc.end();
+    } catch (err) { res.status(500).send("Error generating certificate"); }
 });
 
 // ==========================================
@@ -472,12 +462,40 @@ app.delete('/api/courses/:id', verifyToken, isAdmin, async (req, res) => {
 app.post('/api/notes/upload', verifyToken, isAdmin, upload.single('pdf_file'), async (req, res) => {
     try {
         const { course_id, semester, subject_name, is_pro, content } = req.body;
-        const file_url = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : null;
+        const file_url = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : null;
         
         await db.query(
             "INSERT INTO notes (course_id, semester, subject_name, file_url, uploaded_by, is_pro, content) VALUES (?, ?, ?, ?, ?, ?, ?)", 
             [course_id, semester, subject_name, file_url, req.user.id, is_pro === 'true' || is_pro === true, content || null]
         );
+    res.json({ success: true });
+} catch (error) { res.status(500).json({ success: false }); }
+});
+
+app.get('/api/notes/:id', verifyToken, isAdmin, async (req, res) => {
+    try {
+        const [notes] = await db.query("SELECT * FROM notes WHERE id = ?", [req.params.id]);
+        if (notes.length === 0) return res.status(404).json({ success: false });
+        res.json({ success: true, data: notes[0] });
+    } catch (error) { res.status(500).json({ success: false }); }
+});
+
+app.put('/api/notes/:id', verifyToken, isAdmin, upload.single('pdf_file'), async (req, res) => {
+    try {
+        const { subject_name, is_pro, content } = req.body;
+        let updateQuery = "UPDATE notes SET subject_name = ?, is_pro = ?, content = ?";
+        let queryParams = [subject_name, is_pro === 'true' || is_pro === true, content || null];
+
+        if (req.file) {
+            const file_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            updateQuery += ", file_url = ?";
+            queryParams.push(file_url);
+        }
+        
+        updateQuery += " WHERE id = ?";
+        queryParams.push(req.params.id);
+
+        await db.query(updateQuery, queryParams);
         res.json({ success: true });
     } catch (error) { res.status(500).json({ success: false }); }
 });

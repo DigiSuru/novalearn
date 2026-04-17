@@ -50,6 +50,12 @@ const routes = [
         name: 'Upload', 
         component: Upload,
         meta: { requiresAdmin: true } 
+    },
+    { 
+        path: '/edit-content/:noteId', 
+        name: 'EditContent', 
+        component: Upload,
+        meta: { requiresAdmin: true } 
     }
 ];
 

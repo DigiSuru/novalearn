@@ -115,13 +115,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
 
+const route = useRoute();
 const router = useRouter();
 const courses = ref([]);
 const loading = ref(false);
 const editor = ref(null);
+const isEditMode = ref(false);
 
 const form = ref({
   course_id: '',
@@ -136,8 +138,25 @@ onMounted(async () => {
   try {
     const res = await api.getCourses();
     courses.value = res.data.data;
+    
+    // Check if we are in edit mode
+    if (route.params.noteId) {
+        isEditMode.value = true;
+        const noteRes = await api.getNote(route.params.noteId);
+        const note = noteRes.data.data;
+        
+        form.value.course_id = note.course_id;
+        form.value.semester = note.semester;
+        form.value.subject_name = note.subject_name;
+        form.value.is_pro = note.is_pro === 1 || note.is_pro === true;
+        form.value.content = note.content || '';
+        
+        if (form.value.content && editor.value) {
+            editor.value.innerHTML = form.value.content;
+        }
+    }
   } catch (error) {
-    console.error('Failed to load courses');
+    console.error('Failed to load data');
   }
 });
 
@@ -166,19 +185,27 @@ const handleFileChange = (e) => {
 const handleUpload = async () => {
   loading.value = true;
   const formData = new FormData();
-  formData.append('course_id', form.value.course_id);
-  formData.append('semester', form.value.semester);
+  if (!isEditMode.value) {
+      formData.append('course_id', form.value.course_id);
+      formData.append('semester', form.value.semester);
+  }
   formData.append('subject_name', form.value.subject_name);
   formData.append('is_pro', form.value.is_pro);
   if(form.value.content) formData.append('content', form.value.content);
   if(form.value.pdf_file) formData.append('pdf_file', form.value.pdf_file);
 
   try {
-    await api.uploadNote(formData);
-    alert('Lesson published successfully to the Matrix!');
-    router.push('/profile');
+    if (isEditMode.value) {
+        await api.updateNote(route.params.noteId, formData);
+        alert('Lesson updated successfully in the Matrix!');
+        router.push(`/course/${form.value.course_id}`);
+    } else {
+        await api.uploadNote(formData);
+        alert('Lesson published successfully to the Matrix!');
+        router.push('/profile');
+    }
   } catch (error) {
-    alert('Upload failed. Ensure the backend accepts the content payload.');
+    alert('Action failed. Ensure the backend accepts the content payload.');
   } finally {
     loading.value = false;
   }

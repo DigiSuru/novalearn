@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    // Uses environment variable if available, otherwise defaults to the live Render URL
+    baseURL: import.meta.env.VITE_API_URL || 'https://novalearn-dmdf.onrender.com/api',
     headers: { 'Content-Type': 'application/json' }
 });
 
@@ -28,11 +29,15 @@ apiClient.interceptors.response.use(
 export default {
     loginUser: (data) => apiClient.post('/auth/login', data),
     registerUser: (data) => apiClient.post('/auth/register', data),
+    
+    // --- NEW: Secure Admin Registration Endpoint ---
+    registerAdmin: (data) => apiClient.post('/auth/register-admin', data),
+    
     forgotPassword: (data) => apiClient.post('/auth/forgot-password', data),
     resetPassword: (data) => apiClient.post('/auth/reset-password', data),
     
     updateProfile: (data) => apiClient.put('/user/profile', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-    upgradeToPro: () => apiClient.post('/user/upgrade'), // Legacy mock upgrade
+    upgradeToPro: () => apiClient.post('/user/upgrade'),
     
     getCourses: () => apiClient.get('/courses'),
     getCourseDetails: (id) => apiClient.get(`/courses/${id}`),
@@ -61,8 +66,6 @@ export default {
     getUserNotes: () => apiClient.get('/user/notes'),
     addCourse: (data) => apiClient.post('/courses', data),
     deleteCourse: (id) => apiClient.delete(`/courses/${id}`),
-    
-    // Note: This endpoint inherently supports video files (MP4) now via FormData!
     uploadNote: (data) => apiClient.post('/notes/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     deleteNote: (id) => apiClient.delete(`/notes/${id}`),
 
@@ -70,21 +73,9 @@ export default {
     addQuestionToQuiz: (quizId, data) => apiClient.post(`/admin/quizzes/${quizId}/questions`, data),
     deleteQuiz: (quizId) => apiClient.delete(`/admin/quizzes/${quizId}`),
 
-    // ==========================================
-    // --- NEW: FEATURE 1 (PAYMENTS) ---
-    // ==========================================
     createCheckoutSession: (data) => apiClient.post('/payments/create-checkout-session', data),
     verifyPayment: (data) => apiClient.post('/payments/verify', data),
-
-    // ==========================================
-    // --- NEW: FEATURE 2 (VIDEO TRACKING) ---
-    // ==========================================
     recordVideoProgress: (noteId, progressData) => apiClient.post(`/user/video-progress/${noteId}`, progressData),
-
-    // ==========================================
-    // --- NEW: FEATURE 3 (CERTIFICATES) ---
-    // ==========================================
     getUserCertificates: () => apiClient.get('/user/certificates'),
-    // Note: We use responseType 'blob' to handle binary PDF file downloads directly from the server
     generateCertificate: (courseId) => apiClient.post(`/courses/${courseId}/certificate`, null, { responseType: 'blob' })
 };

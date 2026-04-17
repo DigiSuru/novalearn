@@ -113,9 +113,16 @@
              <div class="space-y-4">
                 <h3 class="text-xl font-black text-gray-900">Enrolled Programs & Classes</h3>
                 <div v-if="enrolledCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div v-for="c in enrolledCourses" :key="c.id" @click="$router.push(`/course/${c.id}`)" class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all cursor-pointer group">
-                      <span class="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase border border-blue-100">{{ c.short_name }}</span>
-                      <h4 class="text-2xl font-black text-gray-900 mt-4 leading-tight group-hover:text-blue-600 transition-colors">{{ c.course_name }}</h4>
+                   <div v-for="c in enrolledCourses" :key="c.id" class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all group flex flex-col justify-between">
+                      <div @click="$router.push(`/course/${c.id}`)" class="cursor-pointer mb-6">
+                         <span class="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase border border-blue-100">{{ c.short_name }}</span>
+                         <h4 class="text-2xl font-black text-gray-900 mt-4 leading-tight group-hover:text-blue-600 transition-colors">{{ c.course_name }}</h4>
+                      </div>
+                      <!-- FEATURE 3: PDF CERTIFICATE DOWNLOAD BUTTON -->
+                      <button @click="downloadCertificate(c)" class="w-full bg-gray-50 hover:bg-gray-900 hover:text-white text-gray-600 border border-gray-200 py-3 rounded-xl font-black text-sm transition-all flex items-center justify-center">
+                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg>
+                         Issue Certificate
+                      </button>
                    </div>
                 </div>
                 <div v-else class="bg-white p-12 rounded-[2rem] border-2 border-dashed border-gray-200 text-center text-gray-400">
@@ -292,7 +299,7 @@
                    <h2 class="text-2xl font-black text-gray-900">Content Matrix</h2>
                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Manage curriculum materials.</p>
                 </div>
-                <button @click="$router.push('/upload')" class="bg-gray-900 text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-xl shadow-xl hover:bg-blue-600 transition-all">Manage Content</button>
+                <button @click="$router.push('/upload')" class="bg-gray-900 text-white font-black text-xs uppercase tracking-widest py-3 px-6 rounded-xl shadow-xl hover:bg-blue-600 transition-all">+ Inject Data</button>
              </div>
              <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm">
                 <table class="w-full text-left border-collapse">
@@ -317,7 +324,7 @@
                          </td>
                          <td class="p-5 text-center">
                             <span v-if="note.content" class="bg-purple-50 text-purple-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest border border-purple-100">Rich Text</span>
-                            <span v-else-if="note.file_url" class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest border border-blue-100">PDF Doc</span>
+                            <span v-else-if="note.file_url" class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest border border-blue-100">File</span>
                          </td>
                          <td class="p-5 text-right space-x-2">
                             <button @click="handleDeleteNote(note.id)" class="p-2 text-gray-400 hover:text-red-600 bg-white border border-gray-200 rounded-lg shadow-sm transition-colors">🗑️</button>
@@ -568,7 +575,7 @@ const tabState = ref(null);
 const enrolledCourses = ref([]);
 const realStats = ref({ totalDownloaded: 0, totalCorrectAnswers: 0, recent: [] });
 const leaderboardData = ref([]);
-const assessmentHistory = ref([]); // NEW: Store history
+const assessmentHistory = ref([]); 
 
 const userTotalXP = computed(() => {
    return (realStats.value.totalCorrectAnswers * 100) + (realStats.value.totalDownloaded * 50);
@@ -628,12 +635,30 @@ const loadLeaderboard = async () => {
    } catch(e) { console.error("Leaderboard load failed", e); }
 };
 
-// NEW: Fetch Assessment History
 const loadAssessmentHistory = async () => {
    try {
       const res = await api.getAssessmentHistory();
       assessmentHistory.value = res.data.data;
    } catch(e) { console.error("Failed to load assessment history", e); }
+};
+
+// --- FEATURE 3: PDF CERTIFICATE GENERATOR ---
+const downloadCertificate = async (course) => {
+   try {
+      const res = await api.generateCertificate(course.id);
+      
+      // Handle the Blob response to force download
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `NovaLearn_Certificate_${course.short_name}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+   } catch(e) { 
+      alert("Failed to generate certificate. Make sure you're connected."); 
+   }
 };
 
 onMounted(async () => {
