@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+// SMART API ROUTING: Automatically detects if you are testing locally or on the live Render site.
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocal ? 'http://localhost:5000/api' : 'https://novalearn-dmdf.onrender.com/api';
+
 const apiClient = axios.create({
-    // Uses environment variable if available, otherwise defaults to the live Render URL
-    baseURL: import.meta.env.VITE_API_URL || 'https://novalearn-dmdf.onrender.com/api',
+    baseURL: API_URL,
     headers: { 'Content-Type': 'application/json' }
 });
 
@@ -29,10 +32,7 @@ apiClient.interceptors.response.use(
 export default {
     loginUser: (data) => apiClient.post('/auth/login', data),
     registerUser: (data) => apiClient.post('/auth/register', data),
-    
-    // --- NEW: Secure Admin Registration Endpoint ---
     registerAdmin: (data) => apiClient.post('/auth/register-admin', data),
-    
     forgotPassword: (data) => apiClient.post('/auth/forgot-password', data),
     resetPassword: (data) => apiClient.post('/auth/reset-password', data),
     
@@ -66,6 +66,10 @@ export default {
     getUserNotes: () => apiClient.get('/user/notes'),
     addCourse: (data) => apiClient.post('/courses', data),
     deleteCourse: (id) => apiClient.delete(`/courses/${id}`),
+    
+    getNote: (id) => apiClient.get(`/notes/${id}`),
+    updateNote: (id, data) => apiClient.put(`/notes/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+    
     uploadNote: (data) => apiClient.post('/notes/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
     deleteNote: (id) => apiClient.delete(`/notes/${id}`),
 
