@@ -54,6 +54,13 @@
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
              Interactive Curriculum
           </button>
+          
+          <!-- NEW: EXAM PAPERS TAB -->
+          <button @click="activeTab = 'papers'" :class="activeTab === 'papers' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
+             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+             Exam Papers & Solutions
+          </button>
+          
           <button @click="activeTab = 'discussion'" :class="activeTab === 'discussion' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
              Community ({{ messages.length }})
@@ -85,7 +92,7 @@
             <div class="w-full lg:w-1/3 bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden h-[80vh] flex flex-col flex-shrink-0">
                <div class="p-6 border-b border-gray-100 bg-gray-50/50">
                   <h3 class="font-black text-gray-900 text-lg">Course Syllabus</h3>
-                  <p class="text-xs text-gray-500 font-bold mt-1">{{ notes.length }} Total Lessons</p>
+                  <p class="text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
                </div>
                <div class="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar">
                   
@@ -159,12 +166,9 @@
                      </div>
                      
                      <div class="flex items-center">
-                         <!-- Edit Button for Admins -->
                          <button v-if="user?.role === 'admin'" @click="$router.push(`/edit-content/${selectedTopic.id}`)" class="text-blue-400 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 p-2.5 rounded-xl transition-colors shadow-sm mr-2" title="Edit Lesson">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                          </button>
-
-                         <!-- Delete Button for Admins -->
                          <button v-if="user?.role === 'admin'" @click="handleDelete(selectedTopic.id)" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-colors shadow-sm" title="Delete Lesson">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                          </button>
@@ -174,10 +178,8 @@
                   <!-- Content Area -->
                   <div class="flex-grow p-8 lg:p-10 overflow-y-auto custom-scrollbar bg-gray-50/30">
                      
-                     <!-- Rich Text Content -->
                      <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 rounded-2xl border border-gray-100 shadow-sm" v-html="selectedTopic.content"></div>
                      
-                     <!-- VIDEO PLAYER INTEGRATION -->
                      <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-6 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
                         <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                            <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
@@ -192,14 +194,12 @@
                         ></video>
                      </div>
 
-                     <!-- PDF Document Viewer Fallback -->
                      <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-12 border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50">
                         <div class="text-6xl mb-4">📄</div>
                         <h3 class="text-xl font-black text-gray-800">Document Lesson</h3>
                         <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson utilizes a supplementary PDF document. Please download to view.</p>
                      </div>
                      
-                     <!-- Download Button (for non-video files) -->
                      <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-10 bg-white border border-blue-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
                         <div class="flex items-center gap-4">
                            <div class="w-12 h-12 bg-blue-50 rounded-xl text-blue-600 flex items-center justify-center text-2xl shadow-inner border border-blue-100">📎</div>
@@ -224,6 +224,36 @@
                   </div>
                </div>
 
+            </div>
+         </div>
+      </div>
+
+      <!-- NEW: EXAM PAPERS TAB -->
+      <div v-if="activeTab === 'papers'" class="animate-in fade-in duration-500">
+         <div v-if="papers.length === 0" class="bg-white p-20 rounded-[3rem] border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
+            <div class="text-6xl mb-6">📄</div>
+            <h3 class="text-2xl font-black text-gray-800">No Exam Papers Yet</h3>
+            <p class="text-gray-400 mt-2 font-medium">Previous year board papers and sample exams will appear here.</p>
+         </div>
+         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div v-for="paper in papers" :key="paper.id" class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
+               <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-[4rem] -z-10 group-hover:scale-150 transition-transform"></div>
+               <div>
+                  <div class="flex justify-between items-start mb-6">
+                     <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-indigo-100">Board Exam / Mock</span>
+                     <span v-if="paper.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                  </div>
+                  <h4 class="text-xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight mb-3">{{ paper.subject_name }}</h4>
+                  <p class="text-sm text-gray-500 font-medium">Year / Reference: {{ paper.semester }}</p>
+               </div>
+               
+               <div v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="mt-8">
+                   <button @click="$router.push('/pricing')" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-amber-500 transition-all text-sm uppercase tracking-widest">Unlock Pro to Access</button>
+               </div>
+               <div v-else class="mt-8 flex gap-3">
+                   <a :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-sm uppercase tracking-widest">Download Paper</a>
+                   <button v-if="user?.role === 'admin'" @click="handleDelete(paper.id)" class="px-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-2xl transition-colors shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+               </div>
             </div>
          </div>
       </div>
@@ -328,14 +358,18 @@ const openSections = ref({});
 const completedLessons = ref([]); 
 const isCompleted = computed(() => completedLessons.value.includes(selectedTopic.value?.id));
 
+// SEPARATE LESSONS AND EXAM PAPERS
+const lessons = computed(() => notes.value.filter(n => n.doc_type !== 'paper'));
+const papers = computed(() => notes.value.filter(n => n.doc_type === 'paper'));
+
 const progressPercentage = computed(() => {
-   if(notes.value.length === 0) return 0;
-   return Math.floor((completedLessons.value.length / notes.value.length) * 100); 
+   if(lessons.value.length === 0) return 0;
+   return Math.floor((completedLessons.value.length / lessons.value.length) * 100); 
 });
 
 const filteredGroupedNotes = computed(() => {
   const groups = {};
-  notes.value.forEach(n => {
+  lessons.value.forEach(n => {
     if (!groups[n.semester]) groups[n.semester] = [];
     groups[n.semester].push(n);
   });
@@ -371,8 +405,8 @@ const fetchData = async () => {
       const enrollRes = await api.getUserEnrollments();
       isEnrolled.value = enrollRes.data.data.some(e => e.id == courseId);
       
-      if(notes.value.length > 0) {
-         selectedTopic.value = notes.value[0];
+      if(lessons.value.length > 0) {
+         selectedTopic.value = lessons.value[0];
       }
     }
   } catch (err) { console.error(err); } finally { loading.value = false; }
@@ -392,9 +426,9 @@ const markComplete = async () => {
 
 const nextLesson = () => {
    if(!selectedTopic.value) return;
-   const currentIndex = notes.value.findIndex(n => n.id === selectedTopic.value.id);
-   if(currentIndex !== -1 && currentIndex < notes.value.length - 1) {
-      selectedTopic.value = notes.value[currentIndex + 1];
+   const currentIndex = lessons.value.findIndex(n => n.id === selectedTopic.value.id);
+   if(currentIndex !== -1 && currentIndex < lessons.value.length - 1) {
+      selectedTopic.value = lessons.value[currentIndex + 1];
       openSections.value[selectedTopic.value.semester] = true;
    }
 };
@@ -420,39 +454,31 @@ const sendMessage = async () => {
 
 const trackDownload = async (id) => { if (user.value) await api.recordProgress(id); };
 
-// --- FEATURE 2: VIDEO PROGRESS TRACKING ---
+// Video Progress Logic
 let lastLoggedPercent = 0;
-watch(selectedTopic, () => { lastLoggedPercent = 0; }); // Reset tracker when video changes
+watch(selectedTopic, () => { lastLoggedPercent = 0; });
 
 const handleVideoProgress = async (e, noteId) => {
    if(!user.value) return;
    const video = e.target;
    if(!video.duration) return;
-   
    const percent = Math.floor((video.currentTime / video.duration) * 100);
-   
-   // Ping backend every 10% watched
    if(percent > lastLoggedPercent + 10 || percent === 100) {
       lastLoggedPercent = percent;
       try {
          await api.recordVideoProgress(noteId, { progress_percent: percent });
-         
-         // Auto-complete lesson if they watched > 90%
-         if(percent > 90 && !isCompleted.value) {
-            markComplete();
-         }
+         if(percent > 90 && !isCompleted.value) markComplete();
       } catch(err) { console.error('Tracking issue', err); }
    }
 };
 
-// --- ADMIN FEATURES ---
 const handleDelete = async (noteId) => {
-  if (!confirm("Are you sure you want to delete this lesson? This cannot be undone.")) return;
+  if (!confirm("Are you sure you want to delete this material? This cannot be undone.")) return;
   try {
     await api.deleteNote(noteId);
     notes.value = notes.value.filter(n => n.id !== noteId);
     if(selectedTopic.value?.id === noteId) selectedTopic.value = null;
-    alert("Lesson deleted successfully.");
+    alert("Material deleted successfully.");
   } catch (err) {
     alert("Failed to delete. You might not have permission.");
   }
