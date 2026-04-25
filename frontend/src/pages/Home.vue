@@ -1,346 +1,312 @@
 <template>
-  <div class="min-h-screen bg-white font-sans selection:bg-blue-600 selection:text-white">
+  <div class="min-h-screen bg-gray-50/50 font-sans flex flex-col">
     
-    <!-- Navigation -->
-    <nav :class="{'shadow-md bg-white/95': scrolled, 'bg-white/80': !scrolled}" class="backdrop-blur-xl border-b border-gray-100 fixed top-0 w-full z-50 transition-all duration-300">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div class="flex items-center gap-3 cursor-pointer" @click="scrollToTop">
-           <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-2xl italic shadow-lg shadow-blue-600/20 transform hover:rotate-12 transition-transform">N</div>
-           <span class="text-2xl font-black tracking text-gray-900">NovaLearn-X</span>
-           <span class="text-2l font-black tracking text-gray-900">Your new way to learn</span>
+    <!-- ADVANCED HERO SECTION -->
+    <div class="relative bg-gray-950 overflow-hidden">
+      <!-- Animated Background Elements -->
+      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      <div class="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-blue-600/20 blur-[120px] mix-blend-screen animate-pulse"></div>
+      <div class="absolute -bottom-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-purple-600/20 blur-[120px] mix-blend-screen animate-pulse delay-1000"></div>
+      <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100%_4px] opacity-20 pointer-events-none"></div>
+
+      <!-- Header / Nav -->
+      <header class="relative z-20 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+             <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+             </div>
+             <div>
+                <h1 class="font-black text-xl tracking-tight text-white leading-none">Suru <span class="text-gray-500 font-medium px-1">x</span> DP</h1>
+                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mt-0.5">Elite Tech Academy</p>
+             </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <router-link v-if="!user" to="/login" class="text-sm font-bold text-gray-300 hover:text-white transition-colors">Sign In</router-link>
+            <router-link v-if="!user" to="/register" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-black hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">Enroll Now</router-link>
+            <router-link v-if="user" to="/profile" class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-black hover:bg-white hover:text-gray-900 transition-all">My Vault &rarr;</router-link>
+          </div>
+        </div>
+      </header>
+
+      <!-- Hero Content -->
+      <div class="relative z-10 max-w-7xl mx-auto px-6 py-24 md:py-32 flex flex-col items-center text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
+           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+           <span class="text-xs font-black text-gray-300 uppercase tracking-widest">Admissions Open for 2026-2027</span>
         </div>
         
-        <!-- Desktop Nav -->
-        <div class="hidden lg:flex items-center gap-8">
-           <div class="flex items-center gap-8 text-sm font-bold text-gray-500">
-              <button @click="scrollToSection('features')" class="hover:text-blue-600 transition-colors">Features</button>
-              <button @click="scrollToSection('catalog')" class="hover:text-blue-600 transition-colors">Programs</button>
-              <button @click="scrollToSection('testimonials')" class="hover:text-blue-600 transition-colors">Testimonials</button>
-              <router-link to="/career" class="hover:text-blue-600 transition-colors">Roadmaps</router-link>
-              <router-link to="/pricing" class="hover:text-amber-600 transition-colors flex items-center bg-amber-50 text-amber-600 px-3 py-1.5 rounded-lg border border-amber-100">
-                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro
-              </router-link>
-           </div>
-           <div class="h-6 w-px bg-gray-200"></div>
-           <template v-if="user">
-              <router-link to="/profile" class="bg-gray-900 text-white px-7 py-2.5 rounded-full text-sm font-black hover:bg-blue-600 transition-all shadow-xl hover:shadow-blue-500/20 flex items-center group">
-                 Workspace <span class="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
-              </router-link>
-           </template>
-           <template v-else>
-              <router-link to="/login" class="text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors">Sign In</router-link>
-              <router-link to="/register" class="bg-blue-600 text-white px-7 py-2.5 rounded-full text-sm font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/30 transform hover:-translate-y-0.5">Start Free</router-link>
-           </template>
+        <h2 class="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight mb-6">
+          Dominate the Boards with<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">CS with Suru & IP with DP</span>
+        </h2>
+        
+        <p class="text-lg md:text-xl text-gray-400 font-medium max-w-3xl mb-10 leading-relaxed">
+          The premier local institute for 11th & 12th graders. Master Computer Science and Informatics Practices with highly interactive labs, rich-text notes, mock exams, and personalized mentorship.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md mx-auto">
+           <a href="#programs" class="bg-white text-gray-950 px-8 py-4 rounded-2xl font-black shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center justify-center">
+              Explore Programs
+           </a>
+           <router-link v-if="!user" to="/register" class="bg-gray-800/50 backdrop-blur-md border border-gray-700 text-white px-8 py-4 rounded-2xl font-black hover:bg-gray-800 hover:border-blue-500 transition-all flex items-center justify-center group">
+              Start Learning Free 
+              <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+           </router-link>
         </div>
 
-        <!-- Mobile Menu Toggle -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-gray-600">
-           <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-           <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <!-- Live Stats Banner -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-20 w-full max-w-4xl border-t border-white/10 pt-10">
+           <div class="text-center">
+              <h4 class="text-3xl font-black text-white mb-1">100/100</h4>
+              <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Highest Scorers</p>
+           </div>
+           <div class="text-center">
+              <h4 class="text-3xl font-black text-white mb-1">500+</h4>
+              <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Active Students</p>
+           </div>
+           <div class="text-center">
+              <h4 class="text-3xl font-black text-white mb-1">Interactive</h4>
+              <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Lab Sessions</p>
+           </div>
+           <div class="text-center">
+              <h4 class="text-3xl font-black text-white mb-1">24/7</h4>
+              <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Doubt Support</p>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-20 w-full" id="programs">
+      
+      <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+         <div>
+            <h3 class="text-3xl font-black text-gray-900 tracking-tight mb-2">Our Academic Programs</h3>
+            <p class="text-gray-500 font-medium text-sm">Select your stream to access the complete curriculum.</p>
+         </div>
+         <div class="relative w-full md:w-auto">
+            <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input v-model="searchQuery" @input="handleSearch" placeholder="Search syllabus or topics..." class="w-full md:w-80 bg-white border-2 border-gray-100 pl-12 pr-4 py-3.5 rounded-2xl outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all font-bold text-sm shadow-sm">
+         </div>
       </div>
 
-      <!-- Mobile Nav -->
-      <div v-if="mobileMenuOpen" class="lg:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-xl py-6 px-6 flex flex-col gap-4 z-40">
-          <button @click="scrollToSection('features'); mobileMenuOpen = false" class="text-left font-bold text-gray-700 text-lg">Features</button>
-          <button @click="scrollToSection('catalog'); mobileMenuOpen = false" class="text-left font-bold text-gray-700 text-lg">Programs</button>
-          <router-link to="/pricing" @click="mobileMenuOpen = false" class="font-bold text-amber-600 text-lg">Pro Pricing</router-link>
-          <div class="h-px w-full bg-gray-100 my-2"></div>
-          <template v-if="user">
-              <router-link to="/profile" class="bg-blue-600 text-white text-center py-3 rounded-xl font-black">My Workspace</router-link>
-          </template>
-          <template v-else>
-              <router-link to="/login" class="text-center font-bold text-gray-700 py-2">Sign In</router-link>
-              <router-link to="/register" class="bg-blue-600 text-white text-center py-3 rounded-xl font-black">Start Free</router-link>
-          </template>
+      <!-- Loading State -->
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+         <div v-for="i in 3" :key="i" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm h-72 animate-pulse flex flex-col justify-between">
+            <div>
+               <div class="w-20 h-6 bg-gray-200 rounded-md mb-4"></div>
+               <div class="w-3/4 h-8 bg-gray-200 rounded-lg mb-2"></div>
+               <div class="w-1/2 h-8 bg-gray-200 rounded-lg"></div>
+            </div>
+            <div class="w-full h-12 bg-gray-100 rounded-xl mt-8"></div>
+         </div>
       </div>
-    </nav>
 
-    <!-- Advanced Hero Section -->
-    <section class="relative pt-32 pb-32 overflow-hidden flex items-center min-h-[90vh]">
-       <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-50/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-       <div class="absolute top-0 right-0 w-[50vw] h-[50vh] bg-gradient-to-bl from-blue-50 to-transparent -z-10"></div>
-       <div class="absolute bottom-0 left-0 w-[30vw] h-[50vh] bg-gradient-to-tr from-indigo-50 to-transparent -z-10"></div>
-       
-       <div class="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center text-center">
-          <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-gray-100 shadow-sm text-gray-700 font-bold text-xs uppercase tracking-widest mb-10 transform hover:scale-105 transition-transform cursor-default">
-             <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span></span>
-             v2.0 Elite LMS Platform Live
+      <!-- Course Grid -->
+      <div v-else-if="courses.length > 0 && !searchQuery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div v-for="course in courses" :key="course.id" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-purple-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+          <div>
+            <div class="flex items-center justify-between mb-6">
+               <span class="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border border-blue-100">{{ course.short_name }}</span>
+               <span class="text-gray-400 bg-gray-50 text-xs font-black px-3 py-1.5 rounded-lg">{{ course.total_semesters }} Chapters</span>
+            </div>
+            <h4 class="text-2xl font-black text-gray-900 leading-tight mb-2 group-hover:text-blue-600 transition-colors">{{ course.course_name }}</h4>
+            <p class="text-sm text-gray-500 font-medium mt-4 line-clamp-2">Complete access to rich-text notes, video lectures, and active discussions.</p>
           </div>
-          
-          <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-gray-900 leading-[1.05] mb-8 max-w-5xl">
-             Master your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">{{ dynamicWord }}</span><br class="hidden md:block">
-             Accelerate your future.
-          </h1>
-          
-          <p class="text-xl md:text-2xl text-gray-500 font-medium mb-12 max-w-3xl leading-relaxed">
-             The all-in-one educational ecosystem featuring rich-text lessons, interactive mock exams, and community-driven learning paths.
-          </p>
-          
-          <div class="flex flex-col sm:flex-row gap-5">
-             <router-link to="/register" class="bg-gray-900 text-white px-10 py-5 rounded-2xl font-black shadow-2xl hover:shadow-gray-900/40 hover:-translate-y-1 transition-all text-lg flex items-center justify-center">
-                Start Learning Free
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-             </router-link>
-             <button @click="scrollToSection('catalog')" class="bg-white text-gray-900 border-2 border-gray-200 px-10 py-5 rounded-2xl font-black hover:border-gray-900 hover:bg-gray-50 transition-all text-lg flex items-center justify-center">
-                Explore Programs
-             </button>
-          </div>
-          
-          <!-- Live Platform Stats -->
-          <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 border-t border-gray-100 pt-10 w-full max-w-4xl">
-             <div>
-                <p class="text-4xl font-black text-gray-900">5k+</p>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Active Students</p>
-             </div>
-             <div>
-                <p class="text-4xl font-black text-blue-600">{{ courses.length || 12 }}+</p>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Degree Programs</p>
-             </div>
-             <div>
-                <p class="text-4xl font-black text-indigo-600">99%</p>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Exam Success</p>
-             </div>
-             <div>
-                <p class="text-4xl font-black text-purple-600">24/7</p>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Community Support</p>
-             </div>
-          </div>
-       </div>
-    </section>
+          <button @click="$router.push(`/course/${course.id}`)" class="mt-8 w-full bg-gray-50 group-hover:bg-gray-900 group-hover:text-white text-gray-700 py-4 rounded-2xl font-black transition-colors flex items-center justify-center text-sm uppercase tracking-widest">
+            Enter Workspace <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+        </div>
+      </div>
 
-    <!-- Trusted By Logos -->
-    <section class="border-y border-gray-100 bg-gray-50/50 py-10 overflow-hidden">
-       <div class="max-w-7xl mx-auto px-6">
-          <p class="text-center text-xs font-black text-gray-400 uppercase tracking-widest mb-6">Empowering students across top institutions</p>
-          <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 hover:opacity-100 transition-opacity duration-500">
-             <div class="text-2xl font-black text-gray-900 tracking-tighter">MIT</div>
-             <div class="text-2xl font-black text-gray-900 tracking-tighter">Stanford</div>
-             <div class="text-2xl font-black text-gray-900 tracking-tighter">Harvard</div>
-             <div class="text-2xl font-black text-gray-900 tracking-tighter">Oxford</div>
-             <div class="text-2xl font-black text-gray-900 tracking-tighter">Cambridge</div>
-          </div>
-       </div>
-    </section>
+      <!-- Search Results Grid -->
+      <div v-else-if="searchQuery" class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+         <div v-if="searchResults.length === 0" class="text-center py-20 bg-white rounded-[3rem] border border-gray-100 shadow-sm">
+            <div class="text-5xl mb-4 grayscale opacity-50">🔍</div>
+            <h4 class="font-black text-gray-900 text-xl">No topics found</h4>
+            <p class="text-gray-500 font-medium text-sm mt-2">Try adjusting your search terms.</p>
+         </div>
+         <div v-for="res in searchResults" :key="res.id" @click="$router.push(`/course/${res.course_id}`)" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-300 cursor-pointer transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-4">
+               <div class="w-12 h-12 bg-blue-50 rounded-xl text-blue-600 flex items-center justify-center text-xl border border-blue-100">📄</div>
+               <div>
+                  <h4 class="font-black text-gray-900 group-hover:text-blue-600 transition-colors">{{ res.subject_name }}</h4>
+                  <div class="flex gap-2 mt-1">
+                     <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-gray-100 px-2 py-0.5 rounded">{{ res.short_name }}</span>
+                     <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 border border-amber-100 px-2 py-0.5 rounded" v-if="res.is_pro">Pro Exclusive</span>
+                  </div>
+               </div>
+            </div>
+            <svg class="w-5 h-5 text-gray-300 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+         </div>
+      </div>
 
-    <!-- Features Matrix -->
-    <section id="features" class="py-32 bg-white">
-       <div class="max-w-7xl mx-auto px-6">
-          <div class="text-center max-w-3xl mx-auto mb-20">
-             <h2 class="text-4xl font-black text-gray-900 tracking-tight mb-4">A complete learning operating system.</h2>
-             <p class="text-xl text-gray-500 font-medium">We replaced static PDF dumps with an interactive, community-driven platform designed to guarantee academic success.</p>
-          </div>
+      <div v-else class="text-center py-20 bg-white rounded-[3rem] border border-gray-100 shadow-sm">
+         <p class="font-black text-gray-400">No programs currently available in the database.</p>
+      </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-             <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:bg-white transition-all duration-300 group">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-3">Rich-Text Interactive Curriculum</h3>
-                <p class="text-gray-500 font-medium leading-relaxed">No more struggling to read messy PDFs on your phone. Our proprietary content studio delivers beautifully formatted text, code blocks, and diagrams natively in your browser.</p>
-             </div>
-             
-             <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:bg-white transition-all duration-300 group">
-                <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-3">Mock Assessments Studio</h3>
-                <p class="text-gray-500 font-medium leading-relaxed">Test your knowledge before the real exam. Take dynamic, timed MCQ quizzes created by your faculty, earn XP, and track your accuracy over time.</p>
-             </div>
-             
-             <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:bg-white transition-all duration-300 group">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
-                </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-3">Live Community Discourse</h3>
-                <p class="text-gray-500 font-medium leading-relaxed">Stuck on a concept? Drop into the course-specific discussion board. Get answers from peers, upvote helpful responses, and collaborate in real-time.</p>
-             </div>
-             
-             <div class="bg-gray-900 p-10 rounded-[2.5rem] border border-gray-800 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300 group relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/20 rounded-full blur-3xl"></div>
-                <div class="w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform z-10 relative">
-                   <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"></path></svg>
-                </div>
-                <h3 class="text-2xl font-black text-white mb-3 relative z-10">Pro Elite Premium Vault</h3>
-                <p class="text-gray-400 font-medium leading-relaxed relative z-10">Unlock the ultimate unfair advantage. Subscribe to Pro to access fully solved previous year papers, handwritten master notes, and an ad-free workspace.</p>
-             </div>
-          </div>
-       </div>
-    </section>
+      <!-- FACULTY / MENTORS SECTION -->
+      <section class="mt-32 border-t border-gray-200 pt-20">
+         <div class="text-center mb-16">
+            <h3 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Meet the Masters</h3>
+            <p class="text-gray-500 font-medium mt-4 max-w-2xl mx-auto">Learn directly from the local legends. Years of experience crafting board toppers and tech enthusiasts.</p>
+         </div>
 
-    <!-- Dynamic Course Catalog -->
-    <section id="catalog" class="py-32 bg-gray-50 border-t border-gray-100">
-       <div class="max-w-7xl mx-auto px-6">
-          <div class="flex flex-col lg:flex-row justify-between items-end mb-16 gap-6">
-             <div>
-                <span class="text-blue-600 font-black tracking-widest uppercase text-xs">Official Syllabus</span>
-                <h2 class="text-4xl font-black text-gray-900 tracking-tight mt-2">Academic Catalog</h2>
-                <p class="text-gray-500 font-medium mt-2">Verified degrees and certification learning paths.</p>
-             </div>
-             
-             <!-- Advanced Search & Filter -->
-             <div class="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
-                <div class="relative w-full sm:w-80">
-                   <input v-model="searchQuery" placeholder="Search programs (e.g. BCA)..." class="pl-12 pr-6 py-4 rounded-2xl border border-gray-200 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 font-bold text-sm w-full shadow-sm transition-all">
-                   <svg class="w-5 h-5 absolute left-4 top-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-             </div>
-          </div>
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            <!-- Suru Card -->
+            <div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
+               <div class="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
+               <div class="w-32 h-32 flex-shrink-0 bg-blue-600 rounded-full flex items-center justify-center font-black text-5xl text-white shadow-2xl border-4 border-white z-10">
+                  S
+               </div>
+               <div class="text-center md:text-left z-10">
+                  <h4 class="text-2xl font-black text-gray-900">Suru Sir</h4>
+                  <p class="text-blue-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Computer Science</p>
+                  <p class="text-gray-500 text-sm font-medium leading-relaxed">Expert in Python, SQL, and core CS concepts. Suru Sir's logical approach makes complex programming feel like a game. Guaranteed logic builder.</p>
+               </div>
+            </div>
 
-          <div v-if="loading" class="flex justify-center py-20">
-             <div class="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full shadow-lg"></div>
-          </div>
-          
-          <div v-else-if="filteredCourses.length === 0" class="text-center py-24 bg-white rounded-[3rem] border border-gray-200 shadow-sm">
-             <div class="text-6xl mb-4 opacity-50">🔍</div>
-             <h3 class="text-xl font-black text-gray-900">No programs found</h3>
-             <p class="text-gray-500 font-medium mt-1">Try adjusting your search terms.</p>
-          </div>
+            <!-- DP Card -->
+            <div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-purple-300 transition-colors">
+               <div class="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
+               <div class="w-32 h-32 flex-shrink-0 bg-purple-600 rounded-full flex items-center justify-center font-black text-5xl text-white shadow-2xl border-4 border-white z-10">
+                  DP
+               </div>
+               <div class="text-center md:text-left z-10">
+                  <h4 class="text-2xl font-black text-gray-900">DP Sir</h4>
+                  <p class="text-purple-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Informatics Practices</p>
+                  <p class="text-gray-500 text-sm font-medium leading-relaxed">Master of Pandas, DataFrames, and Data Handling. DP Sir simplifies data science concepts for 12th graders, ensuring 100% board readiness.</p>
+               </div>
+            </div>
+         </div>
+      </section>
 
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-             <div v-for="course in filteredCourses" :key="course.id" class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 transition-all duration-300 group flex flex-col justify-between">
-                <div>
-                   <div class="flex justify-between items-start mb-8">
-                      <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-inner">
-                         {{ course.short_name.charAt(0) }}
-                      </div>
-                      <span class="bg-gray-50 text-gray-500 border border-gray-100 text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest">{{ course.total_semesters }} Sections</span>
-                   </div>
-                   <h3 class="text-2xl font-black text-gray-900 group-hover:text-blue-600 transition-colors leading-tight mb-3 pr-4">{{ course.course_name }}</h3>
-                   <p class="text-gray-400 text-sm font-medium leading-relaxed">Complete curriculum mapped to official educational standards with interactive lessons.</p>
-                </div>
-                <button @click="$router.push(`/course/${course.id}`)" class="mt-10 w-full py-4 bg-gray-50 border border-gray-100 rounded-xl font-black text-gray-700 group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 transition-all flex items-center justify-center">
-                   View Curriculum <span class="ml-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-                </button>
-             </div>
-          </div>
-       </div>
-    </section>
+    </main>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-32 bg-white">
-       <div class="max-w-7xl mx-auto px-6">
-          <div class="text-center mb-16">
-             <h2 class="text-4xl font-black text-gray-900 tracking-tight mb-4">Don't just take our word for it.</h2>
-             <p class="text-xl text-gray-500 font-medium">Join thousands of students upgrading their academic life.</p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <div class="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 hover:bg-white hover:shadow-xl transition-all">
-                <div class="flex text-amber-400 mb-6"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" v-for="i in 5" :key="i"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></div>
-                <p class="text-gray-700 font-medium italic mb-8">"The rich text lessons completely changed how I study. No more zooming in on blurry PDFs. The Pro plan solved papers saved my finals."</p>
-                <div class="flex items-center gap-4">
-                   <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center font-black text-blue-600">A</div>
-                   <div><p class="font-black text-gray-900">Ananya R.</p><p class="text-xs text-gray-500 font-bold uppercase tracking-widest">BCA Student</p></div>
-                </div>
-             </div>
-             <!-- ... other testimonials ... -->
-          </div>
-       </div>
-    </section>
+    <!-- ADVANCED MEGA FOOTER -->
+    <footer class="bg-gray-950 text-white mt-auto pt-24 pb-12 relative overflow-hidden">
+      <!-- Background Footer Accents -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+      <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
+      
+      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
+         
+         <!-- Brand Column -->
+         <div class="lg:pr-8">
+            <div class="flex items-center gap-3 mb-6">
+               <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+               </div>
+               <h3 class="font-black text-xl tracking-tight leading-none">Suru <span class="text-gray-500 font-medium px-1">x</span> DP</h3>
+            </div>
+            <p class="text-gray-400 text-sm font-medium leading-relaxed mb-6">
+               The premier local institute dedicated to dominating board exams. We transform local students into global tech leaders through expert CS & IP mentorship.
+            </p>
+            <div class="flex space-x-4">
+               <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-blue-600 transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+               <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-purple-600 transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+            </div>
+         </div>
 
-    <!-- Final CTA -->
-    <section class="py-20">
-       <div class="max-w-6xl mx-auto px-6">
-          <div class="bg-gray-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
-             <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-blue-600/30 to-purple-600/30 blur-3xl"></div>
-             
-             <div class="relative z-10">
-                <h2 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-6">Ready to transform your grades?</h2>
-                <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto font-medium">Join the next generation of top-tier students. Create your free account in seconds and unlock the academic vault.</p>
-                <router-link to="/register" class="inline-block bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 shadow-xl">
-                   Create Free Account
-                </router-link>
-             </div>
-          </div>
-       </div>
-    </section>
+         <!-- Academics Column -->
+         <div>
+            <h4 class="font-black text-white text-lg mb-6">Academics</h4>
+            <ul class="space-y-4">
+               <li><a href="#" class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center"><svg class="w-3 h-3 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> Class 11 - Computer Science</a></li>
+               <li><a href="#" class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center"><svg class="w-3 h-3 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> Class 12 - Computer Science</a></li>
+               <li><a href="#" class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center"><svg class="w-3 h-3 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> Class 11 - Info. Practices</a></li>
+               <li><a href="#" class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center"><svg class="w-3 h-3 mr-2 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg> Class 12 - Info. Practices</a></li>
+            </ul>
+         </div>
 
-    <footer class="bg-white border-t border-gray-200 pt-20 pb-10">
-       <div class="max-w-7xl mx-auto px-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-             <div class="md:col-span-1">
-                <div class="flex items-center gap-2 mb-6">
-                   <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white font-black italic">N</div>
-                   <span class="text-xl font-black tracking-tighter text-gray-900">NovaLearn.</span>
-                </div>
-                <p class="text-gray-500 text-sm font-medium leading-relaxed mb-6">Building the ultimate operating system for modern education. Study smarter, not harder.</p>
-             </div>
-             
-             <!-- Footer Links omitted for brevity, matching previous version -->
-          </div>
-          
-          <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-             <p class="text-gray-400 font-bold text-sm">Made with ❤️ by Suru</p>
-             <div class="flex gap-4">
-                <a href="#" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-200 transition-all">𝕏</a>
-                <a href="#" class="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:border-blue-200 transition-all">in</a>
-             </div>
-          </div>
-       </div>
+         <!-- Platform Column -->
+         <div>
+            <h4 class="font-black text-white text-lg mb-6">Digital Platform</h4>
+            <ul class="space-y-4">
+               <li><router-link to="/login" class="text-sm font-bold text-gray-400 hover:text-white transition-colors">Student Login</router-link></li>
+               <li><router-link to="/register" class="text-sm font-bold text-gray-400 hover:text-white transition-colors">New Registration</router-link></li>
+               <li><router-link to="/profile" class="text-sm font-bold text-gray-400 hover:text-white transition-colors">Student Vault (Dashboard)</router-link></li>
+               <li><router-link to="/pricing" class="text-sm font-bold text-amber-500 hover:text-amber-400 transition-colors">Pro Elite Features</router-link></li>
+            </ul>
+         </div>
+
+         <!-- Contact Column -->
+         <div>
+            <h4 class="font-black text-white text-lg mb-6">Contact Institute</h4>
+            <ul class="space-y-5">
+               <li class="flex items-start text-gray-400">
+                  <svg class="w-5 h-5 mr-3 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  <span class="text-sm font-bold">123 Education Hub,<br>Vidya Nagar Sector-4<br>Local City, 302001</span>
+               </li>
+               <li class="flex items-center text-gray-400 hover:text-white transition-colors">
+                  <svg class="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                  <a href="tel:+919876543210" class="text-sm font-bold">+91 98765 43210</a>
+               </li>
+               <li class="flex items-center text-gray-400 hover:text-white transition-colors">
+                  <svg class="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                  <a href="mailto:admissions@surudpacademy.com" class="text-sm font-bold">admissions@surudpacademy.com</a>
+               </li>
+            </ul>
+         </div>
+
+      </div>
+
+      <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+         <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">© {{ new Date().getFullYear() }} Suru x DP Academy. All rights reserved.</p>
+         <div class="flex space-x-6">
+            <a href="#" class="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Privacy Policy</a>
+            <a href="#" class="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Terms of Service</a>
+         </div>
+      </div>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import api from '../services/api';
 
+const user = ref(null);
 const courses = ref([]);
 const loading = ref(true);
-const user = ref(null);
 const searchQuery = ref('');
-const scrolled = ref(false);
-const mobileMenuOpen = ref(false);
+const searchResults = ref([]);
+let searchTimeout;
 
-// Dynamic Rotating Text
-const words = ['curriculum.', 'future.', 'career.', 'skills.'];
-const dynamicWord = ref(words[0]);
-let wordIndex = 0;
-let wordInterval;
-
-const filteredCourses = computed(() => {
-   return courses.value.filter(c => 
-     c.course_name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-     c.short_name.toLowerCase().includes(searchQuery.value.toLowerCase())
-   );
-});
-
-const scrollToSection = (id) => {
-   const el = document.getElementById(id);
-   if(el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - 80; // Offset for sticky nav
-      window.scrollTo({ top: y, behavior: 'smooth' });
-   }
+const handleSearch = () => {
+    clearTimeout(searchTimeout);
+    if (!searchQuery.value) {
+        searchResults.value = [];
+        return;
+    }
+    searchTimeout = setTimeout(async () => {
+        try {
+            const res = await api.search(searchQuery.value);
+            searchResults.value = res.data.data;
+        } catch (error) {
+            console.error("Search failed", error);
+        }
+    }, 300);
 };
 
-const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
-const handleScroll = () => { scrolled.value = window.scrollY > 20; };
-
 onMounted(async () => {
-  window.addEventListener('scroll', handleScroll);
   const savedUser = localStorage.getItem('user');
   if (savedUser) user.value = JSON.parse(savedUser);
-
-  // Start Word Rotator
-  wordInterval = setInterval(() => {
-     wordIndex = (wordIndex + 1) % words.length;
-     dynamicWord.value = words[wordIndex];
-  }, 2000);
-
+  
   try {
     const res = await api.getCourses();
     courses.value = res.data.data;
-  } catch (error) { 
-    console.error('Failed to load courses'); 
-  } finally { 
-    loading.value = false; 
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
   }
 });
-
-onUnmounted(() => {
-   window.removeEventListener('scroll', handleScroll);
-   clearInterval(wordInterval);
-});
 </script>
+
+<style scoped>
+/* Smooth scrolling for anchor links */
+html { scroll-behavior: smooth; }
+</style>
