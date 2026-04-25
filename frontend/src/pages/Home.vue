@@ -261,11 +261,12 @@
             <a href="#" class="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Terms of Service</a>
          </div>
       </div>
+      <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+         <p class="text-xs font-bold text-gray-500 tracking-widest" >Made with &hearts; by Suru</p>
+      </div>
     </footer>
   </div>
-  <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-         <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">© {{ new Date().getFullYear() }} Made with &hearts; by Suru;</p>
-   </div>
+  
 </template>
 
 <script setup>
