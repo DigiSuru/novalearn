@@ -13,7 +13,6 @@ const db = require('./config/db');
 const verifyToken = require('./middleware/authMiddleware');
 const isAdmin = require('./middleware/adminMiddleware');
 
-// Initialize Stripe (Fallback to mock key for local testing if env variable is missing)
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock');
 
 const app = express();
@@ -21,13 +20,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Global Request Logger (CRITICAL FOR DEBUGGING RENDER ISSUES)
+app.use((req, res, next) => {
+    console.log(`➡️ [${req.method}] ${req.url}`);
+    next();
+});
+
 // Ensure uploads directory exists
 if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
 }
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- Multer Configuration ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, './uploads/'),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -41,8 +45,11 @@ const upload = multer({ storage: storage });
 app.get('/api/courses', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM courses");
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /api/courses:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/courses/:id', async (req, res) => {
@@ -50,21 +57,30 @@ app.get('/api/courses/:id', async (req, res) => {
         const [rows] = await db.query("SELECT * FROM courses WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ success: false, message: "Not found" });
         res.json({ success: true, data: rows[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in GET /api/courses/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/courses/:id/notes', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM notes WHERE course_id = ? ORDER BY semester ASC", [req.params.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /api/courses/:id/notes:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/courses/:id/quizzes', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM quizzes WHERE course_id = ? ORDER BY semester ASC", [req.params.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET quizzes:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/search', async (req, res) => {
@@ -77,8 +93,11 @@ app.get('/api/search', async (req, res) => {
              WHERE subject_name LIKE ? OR short_name LIKE ? LIMIT 10`,
             [`%${query}%`, `%${query}%`]
         );
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /search:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 // ==========================================
@@ -94,7 +113,10 @@ app.post('/api/auth/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [name, email, hashedPassword]);
         res.json({ success: true, message: "Account created successfully!" });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /register:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/auth/register-admin', async (req, res) => {
@@ -111,7 +133,10 @@ app.post('/api/auth/register-admin', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.query("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')", [name, email, hashedPassword]);
         res.json({ success: true, message: "Admin Vault created successfully!" });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /register-admin:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -135,7 +160,10 @@ app.post('/api/auth/login', async (req, res) => {
                 bio: user.bio, phone: user.phone
             } 
         });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /login:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/auth/forgot-password', async (req, res) => {
@@ -148,7 +176,10 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         await db.query("UPDATE users SET reset_token = ?, reset_expiry = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE email = ?", [resetCode, email]);
         
         res.json({ success: true, message: "Recovery code generated.", mockCode: resetCode });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /forgot-password:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/auth/reset-password', async (req, res) => {
@@ -162,7 +193,10 @@ app.post('/api/auth/reset-password', async (req, res) => {
         await db.query("UPDATE users SET password = ?, reset_token = NULL, reset_expiry = NULL WHERE email = ?", [hashedPassword, email]);
         
         res.json({ success: true, message: "Password updated successfully!" });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /reset-password:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 // ==========================================
@@ -190,21 +224,30 @@ app.put('/api/user/profile', verifyToken, upload.single('profile_photo'), async 
 
         const [users] = await db.query("SELECT id, name, email, role, is_pro, profile_photo_url, bio, phone FROM users WHERE id = ?", [userId]);
         res.json({ success: true, user: users[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in PUT /profile:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/courses/:id/enroll', verifyToken, async (req, res) => {
     try {
         await db.query("INSERT IGNORE INTO enrollments (user_id, course_id) VALUES (?, ?)", [req.user.id, req.params.id]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /enroll:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/user/enrollments', verifyToken, async (req, res) => {
     try {
         const [rows] = await db.query(`SELECT courses.* FROM enrollments JOIN courses ON enrollments.course_id = courses.id WHERE user_id = ?`, [req.user.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /enrollments:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/user/stats', verifyToken, async (req, res) => {
@@ -221,8 +264,11 @@ app.get('/api/user/stats', verifyToken, async (req, res) => {
             FROM user_progress JOIN notes ON user_progress.note_id = notes.id JOIN courses ON notes.course_id = courses.id
             WHERE user_id = ? ORDER BY accessed_at DESC LIMIT 5`, [userId]);
             
-        res.json({ success: true, stats: { totalDownloaded: count[0].total, totalCorrectAnswers: quizScores[0].total_correct || 0, recent } });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, stats: { totalDownloaded: count[0].total, totalCorrectAnswers: quizScores[0].total_correct || 0, recent: recent || [] } });
+    } catch (error) { 
+        console.error(`❌ Error in GET /stats:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/user/progress/:noteId', verifyToken, async (req, res) => {
@@ -236,7 +282,10 @@ app.post('/api/user/progress/:noteId', verifyToken, async (req, res) => {
         
         await db.query("INSERT IGNORE INTO user_progress (user_id, note_id) VALUES (?, ?)", [req.user.id, req.params.noteId]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /progress:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/user/video-progress/:noteId', verifyToken, async (req, res) => {
@@ -248,7 +297,10 @@ app.post('/api/user/video-progress/:noteId', verifyToken, async (req, res) => {
             ON DUPLICATE KEY UPDATE watch_percent = GREATEST(watch_percent, ?)
         `, [req.user.id, req.params.noteId, progress_percent, progress_percent]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /video-progress:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/leaderboard', async (req, res) => {
@@ -261,8 +313,11 @@ app.get('/api/leaderboard', async (req, res) => {
                  COALESCE((SELECT COUNT(*) * 50 FROM user_progress WHERE user_id = u.id), 0)) / 500) + 1 AS level
             FROM users u WHERE u.role = 'student' ORDER BY xp DESC, u.created_at ASC LIMIT 50;
         `);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /leaderboard:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 // ==========================================
@@ -275,15 +330,21 @@ app.get('/api/courses/:id/discussions', async (req, res) => {
             SELECT discussions.*, users.name, users.role 
             FROM discussions JOIN users ON discussions.user_id = users.id 
             WHERE course_id = ? ORDER BY created_at DESC LIMIT 50`, [req.params.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /discussions:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/courses/:id/discussions', verifyToken, async (req, res) => {
     try {
         await db.query("INSERT INTO discussions (course_id, user_id, message) VALUES (?, ?, ?)", [req.params.id, req.user.id, req.body.message]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /discussions:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/quizzes/:id', verifyToken, async (req, res) => {
@@ -291,8 +352,11 @@ app.get('/api/quizzes/:id', verifyToken, async (req, res) => {
         const [quiz] = await db.query("SELECT * FROM quizzes WHERE id = ?", [req.params.id]);
         const [questions] = await db.query("SELECT id, question_text, option_a, option_b, option_c, option_d FROM questions WHERE quiz_id = ?", [req.params.id]);
         if (quiz.length === 0) return res.status(404).json({ success: false });
-        res.json({ success: true, quiz: quiz[0], questions });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, quiz: quiz[0], questions: questions || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /quizzes/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/quizzes/:id/submit', verifyToken, async (req, res) => {
@@ -311,7 +375,10 @@ app.post('/api/quizzes/:id/submit', verifyToken, async (req, res) => {
             [userId, quizId, score, questions.length, attemptNumber, status]);
         
         res.json({ success: true, score, total: questions.length, attempt: attemptNumber, status });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /quizzes/submit:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/user/assessments/history', verifyToken, async (req, res) => {
@@ -321,8 +388,11 @@ app.get('/api/user/assessments/history', verifyToken, async (req, res) => {
             JOIN quizzes q ON qr.quiz_id = q.id JOIN courses c ON q.course_id = c.id
             WHERE qr.user_id = ? ORDER BY qr.completed_at DESC
         `, [req.user.id]);
-        res.json({ success: true, data: history });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: history || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /assessments/history:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 // ==========================================
@@ -334,7 +404,10 @@ app.post('/api/user/upgrade', verifyToken, async (req, res) => {
         await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
         const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
         res.json({ success: true, user: users[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /user/upgrade:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/payments/create-checkout-session', verifyToken, async (req, res) => {
@@ -358,7 +431,10 @@ app.post('/api/payments/create-checkout-session', verifyToken, async (req, res) 
             client_reference_id: req.user.id.toString()
         });
         res.json({ success: true, sessionId: session.id, url: session.url });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /payments/checkout:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/payments/verify', verifyToken, async (req, res) => {
@@ -366,7 +442,10 @@ app.post('/api/payments/verify', verifyToken, async (req, res) => {
         await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
         const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
         res.json({ success: true, user: users[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /payments/verify:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/user/certificates', verifyToken, async (req, res) => {
@@ -377,8 +456,11 @@ app.get('/api/user/certificates', verifyToken, async (req, res) => {
             JOIN courses co ON c.course_id = co.id 
             WHERE c.user_id = ? ORDER BY c.issued_at DESC
         `, [req.user.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /certificates:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/courses/:id/certificate', verifyToken, async (req, res) => {
@@ -414,7 +496,10 @@ app.post('/api/courses/:id/certificate', verifyToken, async (req, res) => {
         doc.fontSize(15).fillColor('#9ca3af').text(`NovaLearn Academic Validation System`, { align: 'center' });
 
         doc.end();
-    } catch (err) { res.status(500).send("Error generating certificate"); }
+    } catch (err) { 
+        console.error(`❌ Error in POST /certificate:`, err.message);
+        res.status(500).send("Error generating certificate"); 
+    }
 });
 
 // ==========================================
@@ -428,48 +513,66 @@ app.get('/api/admin/system-stats', verifyToken, isAdmin, async (req, res) => {
         const [d] = await db.query("SELECT COUNT(*) as t FROM user_progress");
         const [r] = await db.query("SELECT name, email, created_at, role, is_pro FROM users ORDER BY created_at DESC LIMIT 15");
         res.json({ success: true, stats: { totalStudents: u[0].t, totalNotes: n[0].t, totalDownloads: d[0].t, recentRegistrations: r } });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in GET /system-stats:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/admin/users', verifyToken, isAdmin, async (req, res) => {
     try {
         const [users] = await db.query("SELECT id, name, email, role, is_pro, created_at FROM users ORDER BY created_at DESC");
-        res.json({ success: true, data: users });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: users || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /admin/users:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.put('/api/admin/users/:id/role', verifyToken, isAdmin, async (req, res) => {
     try {
         await db.query("UPDATE users SET role = ? WHERE id = ?", [req.body.role, req.params.id]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in PUT /admin/users:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/courses', verifyToken, isAdmin, async (req, res) => {
     try {
         await db.query("INSERT INTO courses (course_name, short_name, total_semesters) VALUES (?, ?, ?)", [req.body.course_name, req.body.short_name, req.body.total_semesters]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /courses:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.delete('/api/courses/:id', verifyToken, isAdmin, async (req, res) => {
     try {
         await db.query("DELETE FROM courses WHERE id = ?", [req.params.id]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in DELETE /courses:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/notes/upload', verifyToken, isAdmin, upload.single('pdf_file'), async (req, res) => {
     try {
-        const { course_id, semester, subject_name, is_pro, content } = req.body;
+        const { course_id, semester, subject_name, is_pro, content, doc_type } = req.body;
         const file_url = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : null;
         
         await db.query(
-            "INSERT INTO notes (course_id, semester, subject_name, file_url, uploaded_by, is_pro, content) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-            [course_id, semester, subject_name, file_url, req.user.id, is_pro === 'true' || is_pro === true, content || null]
+            "INSERT INTO notes (course_id, semester, subject_name, file_url, uploaded_by, is_pro, content, doc_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
+            [course_id, semester, subject_name, file_url, req.user.id, is_pro === 'true' || is_pro === true, content || null, doc_type || 'lesson']
         );
-    res.json({ success: true });
-} catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true });
+    } catch (error) { 
+        console.error(`❌ Error in POST /notes/upload:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/notes/:id', verifyToken, isAdmin, async (req, res) => {
@@ -477,14 +580,17 @@ app.get('/api/notes/:id', verifyToken, isAdmin, async (req, res) => {
         const [notes] = await db.query("SELECT * FROM notes WHERE id = ?", [req.params.id]);
         if (notes.length === 0) return res.status(404).json({ success: false });
         res.json({ success: true, data: notes[0] });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in GET /notes/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.put('/api/notes/:id', verifyToken, isAdmin, upload.single('pdf_file'), async (req, res) => {
     try {
-        const { subject_name, is_pro, content } = req.body;
-        let updateQuery = "UPDATE notes SET subject_name = ?, is_pro = ?, content = ?";
-        let queryParams = [subject_name, is_pro === 'true' || is_pro === true, content || null];
+        const { subject_name, is_pro, content, doc_type } = req.body;
+        let updateQuery = "UPDATE notes SET subject_name = ?, is_pro = ?, content = ?, doc_type = ?";
+        let queryParams = [subject_name, is_pro === 'true' || is_pro === true, content || null, doc_type || 'lesson'];
 
         if (req.file) {
             const file_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
@@ -497,7 +603,10 @@ app.put('/api/notes/:id', verifyToken, isAdmin, upload.single('pdf_file'), async
 
         await db.query(updateQuery, queryParams);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in PUT /notes/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.delete('/api/notes/:id', verifyToken, isAdmin, async (req, res) => {
@@ -510,7 +619,10 @@ app.delete('/api/notes/:id', verifyToken, isAdmin, async (req, res) => {
         }
         await db.query("DELETE FROM notes WHERE id = ?", [req.params.id]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in DELETE /notes/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.get('/api/user/notes', verifyToken, isAdmin, async (req, res) => {
@@ -519,8 +631,11 @@ app.get('/api/user/notes', verifyToken, isAdmin, async (req, res) => {
             SELECT notes.*, courses.course_name, courses.short_name 
             FROM notes JOIN courses ON notes.course_id = courses.id 
             WHERE notes.uploaded_by = ? ORDER BY notes.created_at DESC`, [req.user.id]);
-        res.json({ success: true, data: rows });
-    } catch (error) { res.status(500).json({ success: false }); }
+        res.json({ success: true, data: rows || [] });
+    } catch (error) { 
+        console.error(`❌ Error in GET /user/notes:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/admin/quizzes', verifyToken, isAdmin, async (req, res) => {
@@ -528,7 +643,10 @@ app.post('/api/admin/quizzes', verifyToken, isAdmin, async (req, res) => {
         const { course_id, title, description, semester } = req.body;
         const [result] = await db.query("INSERT INTO quizzes (course_id, title, description, semester) VALUES (?, ?, ?, ?)", [course_id, title, description, semester || null]);
         res.json({ success: true, quiz_id: result.insertId });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /quizzes:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.post('/api/admin/quizzes/:id/questions', verifyToken, isAdmin, async (req, res) => {
@@ -536,14 +654,20 @@ app.post('/api/admin/quizzes/:id/questions', verifyToken, isAdmin, async (req, r
         const { question_text, option_a, option_b, option_c, option_d, correct_option } = req.body;
         await db.query("INSERT INTO questions (quiz_id, question_text, option_a, option_b, option_c, option_d, correct_option) VALUES (?, ?, ?, ?, ?, ?, ?)", [req.params.id, question_text, option_a, option_b, option_c, option_d, correct_option]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in POST /questions:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 app.delete('/api/admin/quizzes/:id', verifyToken, isAdmin, async (req, res) => {
     try {
         await db.query("DELETE FROM quizzes WHERE id = ?", [req.params.id]);
         res.json({ success: true });
-    } catch (error) { res.status(500).json({ success: false }); }
+    } catch (error) { 
+        console.error(`❌ Error in DELETE /quizzes/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
 });
 
 const PORT = process.env.PORT || 5000;
