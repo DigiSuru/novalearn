@@ -59,6 +59,12 @@
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
              Exam Papers & Solutions
           </button>
+
+          <!-- NEW: PYTHON CODE LAB TAB -->
+          <button @click="activeTab = 'codelab'" :class="activeTab === 'codelab' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
+             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+             Python Code Lab
+          </button>
           
           <button @click="activeTab = 'discussion'" :class="activeTab === 'discussion' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
@@ -265,6 +271,50 @@
          </div>
       </div>
 
+      <!-- NEW: PYTHON CODE LAB TAB -->
+      <div v-if="activeTab === 'codelab'" class="animate-in fade-in duration-500 max-w-6xl mx-auto">
+         <div class="bg-gray-950 rounded-[2.5rem] shadow-2xl border border-gray-800 overflow-hidden flex flex-col h-[75vh]">
+            <!-- Code Lab Header -->
+            <div class="p-6 border-b border-gray-800 bg-gray-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+               <div>
+                  <h3 class="font-black text-xl text-white tracking-tight flex items-center"><span class="text-blue-500 mr-2">🐍</span> Python Code Lab</h3>
+                  <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Practice coding logic directly in your browser.</p>
+               </div>
+               <button @click="runCode" :disabled="isRunningCode" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-black text-sm flex items-center justify-center transition-all disabled:opacity-50 shadow-lg shadow-green-600/20">
+                  <svg v-if="!isRunningCode" class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                  <svg v-else class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                  {{ isRunningCode ? 'Executing Code...' : 'Run Code' }}
+               </button>
+            </div>
+            
+            <div class="flex-grow flex flex-col md:flex-row">
+               <!-- Code Editor Pane -->
+               <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-800 relative bg-gray-900 flex flex-col">
+                  <div class="flex justify-between items-center px-4 py-2 bg-gray-800/50 border-b border-gray-800">
+                     <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">main.py</span>
+                  </div>
+                  <textarea 
+                     v-model="codeInput" 
+                     spellcheck="false" 
+                     class="flex-grow w-full bg-transparent text-gray-300 font-mono p-6 outline-none resize-none custom-scrollbar text-sm leading-relaxed focus:text-white transition-colors"
+                  ></textarea>
+               </div>
+               
+               <!-- Terminal Output Pane -->
+               <div class="w-full md:w-1/2 bg-black flex flex-col relative">
+                  <div class="flex justify-between items-center px-4 py-2 bg-gray-900 border-b border-gray-800">
+                     <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Terminal Output</span>
+                     <button @click="codeOutput = ''" class="text-[10px] font-black text-gray-500 hover:text-gray-300 uppercase tracking-widest transition-colors">Clear</button>
+                  </div>
+                  <div class="flex-grow p-6 font-mono text-sm overflow-y-auto custom-scrollbar">
+                     <div v-if="!codeOutput" class="text-gray-600">Waiting for execution...</div>
+                     <pre v-else class="text-green-400 whitespace-pre-wrap leading-relaxed">{{ codeOutput }}</pre>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
       <!-- DISCUSSIONS TAB -->
       <div v-if="activeTab === 'discussion'" class="animate-in fade-in duration-500 max-w-4xl mx-auto">
          <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 overflow-hidden flex flex-col h-[75vh]">
@@ -407,6 +457,37 @@ const openSections = ref({});
 const completedLessons = ref([]); 
 const isCompleted = computed(() => completedLessons.value.includes(selectedTopic.value?.id));
 
+// Python Code Lab State
+const codeInput = ref('# Welcome to NovaLearn Python Lab!\n# Test your logic here.\n\ndef calculate_score(marks):\n    total = sum(marks)\n    return f"Total Score: {total}"\n\nscores = [85, 92, 78, 90]\nprint(calculate_score(scores))');
+const isRunningCode = ref(false);
+const codeOutput = ref('');
+
+const runCode = () => {
+   isRunningCode.value = true;
+   codeOutput.value = '>>> Establishing secure Python execution environment...\n';
+   
+   setTimeout(() => {
+      codeOutput.value += '>>> Environment ready.\n>>> Executing main.py...\n\n';
+      
+      setTimeout(() => {
+         // Simulated Execution Output
+         let result = '';
+         if (codeInput.value.includes('print(')) {
+            if (codeInput.value.includes('calculate_score(scores)')) {
+               result = "Total Score: 345\n"; 
+            } else {
+               result = "Script execution completed. (Output simulated in browser environment)\n";
+            }
+         } else {
+            result = "Code executed with 0 errors.\n";
+         }
+         
+         codeOutput.value += result + '\n[Process completed in 0.42s]';
+         isRunningCode.value = false;
+      }, 800);
+   }, 600);
+};
+
 // AI Assistant State
 const showAiChat = ref(false);
 const aiQuery = ref('');
@@ -458,7 +539,6 @@ const askAi = async () => {
   isAiTyping.value = true;
   scrollAiChat();
 
-  // Simulate network latency & dynamic context awareness
   setTimeout(() => {
     isAiTyping.value = false;
     let response = "That's a great question! ";
