@@ -408,7 +408,7 @@
        </div>
        
        <div ref="aiChatBox" class="flex-grow p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4 bg-gray-50/50">
-          <div v-for="(msg, idx) in aiMessages" :key="idx" :class="msg.role === 'user' ? 'self-end bg-blue-600 text-white rounded-tr-sm' : 'self-start bg-white border border-gray-200 text-gray-800 rounded-tl-sm'" class="max-w-[85%] p-3.5 rounded-2xl text-sm shadow-sm leading-relaxed">
+          <div v-for="(msg, idx) in aiMessages" :key="idx" :class="msg.role === 'user' ? 'self-end bg-blue-600 text-white rounded-tr-sm' : 'self-start bg-white border border-gray-200 text-gray-800 rounded-tl-sm'" class="max-w-[85%] p-3.5 rounded-2xl text-sm shadow-sm leading-relaxed whitespace-pre-wrap">
              {{ msg.text }}
           </div>
           <div v-if="isAiTyping" class="self-start bg-white border border-gray-200 text-gray-500 p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm flex items-center gap-1.5">
@@ -470,7 +470,6 @@ const runCode = () => {
       codeOutput.value += '>>> Environment ready.\n>>> Executing main.py...\n\n';
       
       setTimeout(() => {
-         // Simulated Execution Output
          let result = '';
          if (codeInput.value.includes('print(')) {
             if (codeInput.value.includes('calculate_score(scores)')) {
@@ -530,28 +529,69 @@ const scrollAiChat = () => {
   });
 };
 
-// Simulated AI Backend Logic
+// --- NEW REAL AI BACKEND LOGIC ---
+const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error("API request failed");
+    return response;
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2);
+    }
+    throw err;
+  }
+};
+
 const askAi = async () => {
   if (!aiQuery.value.trim()) return;
   
-  aiMessages.value.push({ role: 'user', text: aiQuery.value });
+  const userText = aiQuery.value;
+  aiMessages.value.push({ role: 'user', text: userText });
   aiQuery.value = '';
   isAiTyping.value = true;
   scrollAiChat();
 
-  setTimeout(() => {
-    isAiTyping.value = false;
-    let response = "That's a great question! ";
+  try {
+    const apiKey = ""; // Execution environment injects API key automatically
+    const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    // Build smart context for Nova AI
+    let systemContext = "You are Nova, an elite AI teaching assistant for high school CS and IP students. Keep answers concise, helpful, and encouraging. Use plain text formatting or simple markdown.";
     
     if (selectedTopic.value) {
-       response += `Based on the current topic "${selectedTopic.value.subject_name}", this is a core concept. `;
+        systemContext += ` The student is currently studying: ${selectedTopic.value.subject_name}.`;
+        
+        // Strip HTML from the rich text content to feed to the AI safely without exceeding payload limits
+        if (selectedTopic.value.content) {
+            const plainTextContent = selectedTopic.value.content.replace(/<[^>]+>/g, ' ').substring(0, 1500); 
+            systemContext += ` Here is a snippet of their lesson for context: ${plainTextContent}`;
+        }
     }
-    
-    response += "Make sure to review the provided examples in the reading material. Is there a specific part you want me to explain in simpler terms?";
-    
-    aiMessages.value.push({ role: 'ai', text: response });
+
+    const payload = {
+        contents: [{ parts: [{ text: userText }] }],
+        systemInstruction: { parts: [{ text: systemContext }] }
+    };
+
+    const response = await fetchWithRetry(modelUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, my neural network is resting. Please try again.";
+
+    aiMessages.value.push({ role: 'ai', text: aiText });
+  } catch (error) {
+    console.error("Nova AI Error:", error);
+    aiMessages.value.push({ role: 'ai', text: "Oops! My connection to the matrix dropped. Please try asking again in a moment." });
+  } finally {
+    isAiTyping.value = false;
     scrollAiChat();
-  }, 1500);
+  }
 };
 
 const fetchData = async () => {
