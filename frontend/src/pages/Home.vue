@@ -147,6 +147,58 @@
          <p class="font-black text-gray-400">No programs currently available in the database.</p>
       </div>
 
+      <!-- NEW: ASSESSMENT ENGINE SHOWCASE -->
+      <section class="mt-32 relative overflow-hidden bg-gray-900 rounded-[3.5rem] p-10 lg:p-16 text-white shadow-2xl">
+         <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-600/30 rounded-full blur-[100px] pointer-events-none"></div>
+         <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/20 rounded-full blur-[80px] pointer-events-none"></div>
+         
+         <div class="relative z-10 flex flex-col lg:flex-row items-center gap-16">
+            <div class="w-full lg:w-1/2">
+               <span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 inline-block">Platform Feature</span>
+               <h3 class="text-4xl md:text-5xl font-black tracking-tight leading-tight mb-6">Next-Gen Assessment Engine</h3>
+               <p class="text-gray-400 font-medium text-lg mb-8 leading-relaxed">
+                  Test your logic with our state-of-the-art mock exams. Experience real-time exam pressure, navigate freely, flag difficult questions for review, and earn global XP rankings.
+               </p>
+               <ul class="space-y-4 mb-10">
+                  <li class="flex items-center text-sm font-bold text-gray-300"><div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div> Live Timers & Progress Matrices</li>
+                  <li class="flex items-center text-sm font-bold text-gray-300"><div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div> Pro Keyboard Shortcuts (A, B, C, D)</li>
+                  <li class="flex items-center text-sm font-bold text-gray-300"><div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mr-3"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div> Confidence Flagging & Navigation Grids</li>
+               </ul>
+               <router-link to="/register" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/20">Experience Mock Exams Free</router-link>
+            </div>
+            
+            <div class="w-full lg:w-1/2 flex justify-center">
+               <!-- Mock Assessment UI Graphic -->
+               <div class="bg-gray-950 p-6 rounded-[2rem] border border-white/10 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500 w-full max-w-md relative">
+                  <div class="absolute -right-4 -top-4 w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center shadow-lg transform rotate-12">
+                     <span class="text-xs font-black text-gray-900">+XP</span>
+                  </div>
+                  <div class="flex justify-between items-center mb-6">
+                     <div class="w-1/2 h-2 bg-gray-800 rounded-full overflow-hidden"><div class="w-3/4 h-full bg-blue-500"></div></div>
+                     <div class="text-red-400 font-mono font-bold text-sm bg-red-400/10 px-3 py-1 rounded-lg">04:59</div>
+                  </div>
+                  <div class="h-4 w-3/4 bg-gray-800 rounded-md mb-3"></div>
+                  <div class="h-4 w-1/2 bg-gray-800 rounded-md mb-8"></div>
+                  
+                  <div class="space-y-3">
+                     <div class="h-14 w-full bg-blue-600 rounded-xl flex items-center px-4 border border-blue-500 shadow-inner">
+                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-600 font-black mr-4 shadow-sm">A</div>
+                        <div class="h-3 w-1/3 bg-white/50 rounded"></div>
+                     </div>
+                     <div class="h-14 w-full bg-gray-800/50 rounded-xl flex items-center px-4 border border-white/5">
+                        <div class="w-8 h-8 bg-gray-800 rounded-lg mr-4 border border-white/10"></div>
+                        <div class="h-3 w-1/4 bg-gray-700 rounded"></div>
+                     </div>
+                     <div class="h-14 w-full bg-gray-800/50 rounded-xl flex items-center px-4 border border-white/5">
+                        <div class="w-8 h-8 bg-gray-800 rounded-lg mr-4 border border-white/10"></div>
+                        <div class="h-3 w-2/5 bg-gray-700 rounded"></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
       <!-- FACULTY / MENTORS SECTION -->
       <section class="mt-32 border-t border-gray-200 pt-20">
          <div class="text-center mb-16">
@@ -163,7 +215,7 @@
                </div>
                <div class="text-center md:text-left z-10">
                   <h4 class="text-2xl font-black text-gray-900">Suru Sir</h4>
-                  <p class="text-blue-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">PGT - CS & IP </p>
+                  <p class="text-blue-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Computer Science</p>
                   <p class="text-gray-500 text-sm font-medium leading-relaxed">Expert in Python, SQL, and core CS concepts. Suru Sir's logical approach makes complex programming feel like a game. Guaranteed logic builder.</p>
                </div>
             </div>
@@ -176,7 +228,7 @@
                </div>
                <div class="text-center md:text-left z-10">
                   <h4 class="text-2xl font-black text-gray-900">DP Sir</h4>
-                  <p class="text-purple-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">PGT - IP</p>
+                  <p class="text-purple-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Informatics Practices</p>
                   <p class="text-gray-500 text-sm font-medium leading-relaxed">Master of Pandas, DataFrames, and Data Handling. DP Sir simplifies data science concepts for 12th graders, ensuring 100% board readiness.</p>
                </div>
             </div>
@@ -234,20 +286,19 @@
 
          <!-- Contact Column -->
          <div>
-            <h4 class="font-black text-white text-lg mb-6">Contact Us</h4>
+            <h4 class="font-black text-white text-lg mb-6">Contact Institute</h4>
             <ul class="space-y-5">
                <li class="flex items-start text-gray-400">
                   <svg class="w-5 h-5 mr-3 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  <span class="text-sm font-bold">Makrana, 341505</span>
+                  <span class="text-sm font-bold">123 Education Hub,<br>Vidya Nagar Sector-4<br>Local City, 302001</span>
                </li>
                <li class="flex items-center text-gray-400 hover:text-white transition-colors">
                   <svg class="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                  <a href="tel:+919876543210" class="text-sm font-bold">+91 9252145887</a>
-                  <a href="tel:+919876543210" class="text-sm font-bold">+91 7427099478</a>
+                  <a href="tel:+919876543210" class="text-sm font-bold">+91 98765 43210</a>
                </li>
                <li class="flex items-center text-gray-400 hover:text-white transition-colors">
                   <svg class="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                  <a href="mailto:admissions@surudpacademy.com" class="text-sm font-bold">comming soon....</a>
+                  <a href="mailto:admissions@surudpacademy.com" class="text-sm font-bold">admissions@surudpacademy.com</a>
                </li>
             </ul>
          </div>
@@ -261,12 +312,8 @@
             <a href="#" class="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Terms of Service</a>
          </div>
       </div>
-      <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-         <p class="text-xs font-bold text-gray-500 tracking-widest" >Made with &hearts; by Suru</p>
-      </div>
     </footer>
   </div>
-  
 </template>
 
 <script setup>
