@@ -55,7 +55,6 @@
              Interactive Curriculum
           </button>
           
-          <!-- NEW: EXAM PAPERS TAB -->
           <button @click="activeTab = 'papers'" :class="activeTab === 'papers' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
              Exam Papers & Solutions
@@ -65,6 +64,7 @@
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
              Community ({{ messages.length }})
           </button>
+          
           <button @click="activeTab = 'quizzes'" :class="activeTab === 'quizzes' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
              Assessments
@@ -178,6 +178,7 @@
                   <!-- Content Area -->
                   <div class="flex-grow p-8 lg:p-10 overflow-y-auto custom-scrollbar bg-gray-50/30">
                      
+                     <!-- CRITICAL FIX: Ensure rich text renders flawlessly -->
                      <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 rounded-2xl border border-gray-100 shadow-sm" v-html="selectedTopic.content"></div>
                      
                      <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-6 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
@@ -194,6 +195,7 @@
                         ></video>
                      </div>
 
+                     <!-- Only show the document placeholder if there is NO rich text AND NO video -->
                      <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-12 border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50">
                         <div class="text-6xl mb-4">📄</div>
                         <h3 class="text-xl font-black text-gray-800">Document Lesson</h3>
@@ -228,7 +230,7 @@
          </div>
       </div>
 
-      <!-- NEW: EXAM PAPERS TAB -->
+      <!-- EXAM PAPERS TAB (WITH NEW RICH TEXT SUPPORT) -->
       <div v-if="activeTab === 'papers'" class="animate-in fade-in duration-500">
          <div v-if="papers.length === 0" class="bg-white p-20 rounded-[3rem] border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
             <div class="text-6xl mb-6">📄</div>
@@ -244,14 +246,17 @@
                      <span v-if="paper.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
                   </div>
                   <h4 class="text-xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight mb-3">{{ paper.subject_name }}</h4>
-                  <p class="text-sm text-gray-500 font-medium">Year / Reference: {{ paper.semester }}</p>
+                  <p class="text-sm text-gray-500 font-medium mb-4">Year / Reference: {{ paper.semester }}</p>
+                  
+                  <!-- CRITICAL FIX: Ensure rich text instructions entered for Exam Papers are displayed to students -->
+                  <div v-if="paper.content" class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-6 text-sm text-gray-700 rich-text-container max-h-48 overflow-y-auto custom-scrollbar shadow-inner" v-html="paper.content"></div>
                </div>
                
                <div v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="mt-8">
                    <button @click="$router.push('/pricing')" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-amber-500 transition-all text-sm uppercase tracking-widest">Unlock Pro to Access</button>
                </div>
                <div v-else class="mt-8 flex gap-3">
-                   <a :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-sm uppercase tracking-widest">Download Paper</a>
+                   <a v-if="paper.file_url" :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-sm uppercase tracking-widest">Download Paper</a>
                    <button v-if="user?.role === 'admin'" @click="handleDelete(paper.id)" class="px-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-2xl transition-colors shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                </div>
             </div>
@@ -260,7 +265,6 @@
 
       <!-- DISCUSSIONS TAB -->
       <div v-if="activeTab === 'discussion'" class="animate-in fade-in duration-500 max-w-4xl mx-auto">
-         <!-- Keep standard discussion layout -->
          <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 overflow-hidden flex flex-col h-[75vh]">
             <div class="p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
                <div>
@@ -508,6 +512,7 @@ onMounted(() => {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 /* ERROR-FREE RAW CSS FOR RICH TEXT */
