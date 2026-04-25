@@ -321,10 +321,19 @@
                             <span class="bg-gray-100 text-gray-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest">{{ note.short_name }}</span>
                             <span class="text-xs font-bold text-gray-400 ml-2">Sem/Chap {{ note.semester }}</span>
                          </td>
+                         
+                         <!-- ADVANCED FORMAT BADGES -->
                          <td class="p-5 text-center">
-                            <span v-if="note.content" class="bg-purple-50 text-purple-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest border border-purple-100">Rich Text</span>
-                            <span v-else-if="note.file_url" class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest border border-blue-100">File</span>
+                            <!-- Document Type Badge -->
+                            <span v-if="note.doc_type === 'paper'" class="bg-indigo-50 text-indigo-600 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-indigo-100 mb-1 block w-fit mx-auto shadow-sm">Exam Paper</span>
+                            <span v-else class="bg-blue-50 text-blue-600 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-blue-100 mb-1 block w-fit mx-auto shadow-sm">Lesson</span>
+                            
+                            <!-- Media Format Badge -->
+                            <span v-if="note.content" class="bg-purple-50 text-purple-600 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-purple-100 block w-fit mx-auto mt-1">Rich Text</span>
+                            <span v-else-if="note.file_url && note.file_url.endsWith('.mp4')" class="bg-red-50 text-red-600 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-red-100 block w-fit mx-auto mt-1">Video</span>
+                            <span v-else-if="note.file_url" class="bg-green-50 text-green-600 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-green-100 block w-fit mx-auto mt-1">PDF Document</span>
                          </td>
+
                          <td class="p-5 text-right flex justify-end space-x-2">
                             <button @click="$router.push(`/edit-content/${note.id}`)" class="p-2 text-gray-400 hover:text-blue-600 bg-white border border-gray-200 rounded-lg shadow-sm transition-colors" title="Edit Content">
                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
