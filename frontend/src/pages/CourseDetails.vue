@@ -85,11 +85,11 @@
             <p class="text-gray-400 mt-2 font-medium">The curriculum is currently being built by instructors.</p>
          </div>
 
-         <!-- Split Pane Layout -->
-         <div v-else class="flex flex-col lg:flex-row gap-8">
+         <!-- Split Pane Layout (Documentation Style) -->
+         <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
             
-            <!-- Left Sidebar: Curriculum Navigator -->
-            <div class="w-full lg:w-1/3 bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden h-[80vh] flex flex-col flex-shrink-0">
+            <!-- Left Sidebar: Curriculum Navigator (Sticky for easy navigation) -->
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden sticky top-24 max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
                <div class="p-6 border-b border-gray-100 bg-gray-50/50">
                   <h3 class="font-black text-gray-900 text-lg">Course Syllabus</h3>
                   <p class="text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
@@ -135,10 +135,10 @@
                </div>
             </div>
 
-            <!-- Right Main Area: Content Viewer -->
-            <div class="w-full lg:w-2/3 bg-white rounded-[2rem] border border-gray-200 shadow-sm min-h-[80vh] flex flex-col relative overflow-hidden">
+            <!-- Right Main Area: Content Viewer (Expanded fully for natural scrolling) -->
+            <div class="w-full lg:w-2/3 xl:w-3/4 bg-white rounded-[2rem] border border-gray-200 shadow-sm flex flex-col relative overflow-hidden">
                
-               <div v-if="!selectedTopic" class="m-auto text-center p-10">
+               <div v-if="!selectedTopic" class="m-auto text-center p-20">
                   <div class="text-7xl mb-6 opacity-80">🎓</div>
                   <h2 class="text-3xl font-black text-gray-800">Select a lesson to begin</h2>
                   <p class="text-gray-400 mt-2 font-medium">Choose a topic from the curriculum sidebar.</p>
@@ -156,13 +156,13 @@
 
                <div v-else class="flex flex-col h-full">
                   <!-- Lesson Header -->
-                  <div class="p-8 lg:p-10 border-b border-gray-100 flex justify-between items-start">
+                  <div class="p-8 lg:p-10 xl:p-12 border-b border-gray-100 flex justify-between items-start bg-white">
                      <div>
                         <div class="flex items-center gap-3 mb-4">
                            <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
                            <span v-if="selectedTopic.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
                         </div>
-                        <h1 class="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
+                        <h1 class="text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
                      </div>
                      
                      <div class="flex items-center">
@@ -175,13 +175,13 @@
                      </div>
                   </div>
 
-                  <!-- Content Area -->
-                  <div class="flex-grow p-8 lg:p-10 overflow-y-auto custom-scrollbar bg-gray-50/30">
+                  <!-- Content Area (Removed inner scrollbar to let the entire page scroll) -->
+                  <div class="flex-grow p-6 sm:p-10 lg:p-12 xl:p-16 bg-gray-50/30">
                      
-                     <!-- CRITICAL FIX: Ensure rich text renders flawlessly -->
-                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 rounded-2xl border border-gray-100 shadow-sm" v-html="selectedTopic.content"></div>
+                     <!-- CRITICAL FIX: Ensure rich text renders flawlessly with optimized reading width -->
+                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 sm:p-12 lg:p-16 rounded-[2rem] border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
                      
-                     <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-6 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
+                     <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-8 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
                         <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                            <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
                            <span class="text-[10px] font-black uppercase tracking-widest">Live Tracking Active</span>
@@ -189,40 +189,42 @@
                         <video 
                            controls 
                            controlsList="nodownload"
-                           class="w-full max-h-[60vh] object-contain"
+                           class="w-full max-h-[70vh] object-contain"
                            :src="selectedTopic.file_url"
                            @timeupdate="handleVideoProgress($event, selectedTopic.id)"
                         ></video>
                      </div>
 
                      <!-- Only show the document placeholder if there is NO rich text AND NO video -->
-                     <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-12 border-2 border-dashed border-gray-200 rounded-[2rem] bg-gray-50">
+                     <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-16 border-2 border-dashed border-gray-200 rounded-[2rem] bg-white">
                         <div class="text-6xl mb-4">📄</div>
                         <h3 class="text-xl font-black text-gray-800">Document Lesson</h3>
                         <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson utilizes a supplementary PDF document. Please download to view.</p>
                      </div>
                      
-                     <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-10 bg-white border border-blue-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
-                        <div class="flex items-center gap-4">
-                           <div class="w-12 h-12 bg-blue-50 rounded-xl text-blue-600 flex items-center justify-center text-2xl shadow-inner border border-blue-100">📎</div>
+                     <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-12 bg-white border border-blue-100 p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
+                        <div class="flex items-center gap-5">
+                           <div class="w-14 h-14 bg-blue-50 rounded-2xl text-blue-600 flex items-center justify-center text-3xl shadow-inner border border-blue-100">📎</div>
                            <div>
-                              <p class="font-black text-gray-900 text-sm">Supplementary Material</p>
-                              <p class="text-xs text-gray-500 font-bold mt-0.5">PDF Document Attachment</p>
+                              <p class="font-black text-gray-900">Supplementary Material</p>
+                              <p class="text-xs text-gray-500 font-bold mt-1 uppercase tracking-widest">PDF Document Attachment</p>
                            </div>
                         </div>
-                        <a :href="selectedTopic.file_url" target="_blank" @click="trackDownload(selectedTopic.id)" class="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black transition-colors shadow-lg shadow-blue-600/20">
+                        <a :href="selectedTopic.file_url" target="_blank" @click="trackDownload(selectedTopic.id)" class="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-black transition-colors shadow-lg shadow-blue-600/20">
                            Download File
                         </a>
                      </div>
                   </div>
 
-                  <div class="p-6 border-t border-gray-100 bg-white flex justify-between items-center z-10">
-                     <button @click="markComplete" :class="isCompleted ? 'text-green-600 bg-green-50' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 bg-gray-50 border border-gray-200'" class="flex items-center font-black text-xs uppercase tracking-widest transition-all px-4 py-3 rounded-xl">
+                  <div class="p-8 lg:p-10 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 z-10">
+                     <button @click="markComplete" :class="isCompleted ? 'text-green-600 bg-green-50' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 bg-gray-50 border border-gray-200'" class="w-full sm:w-auto flex items-center justify-center font-black text-xs uppercase tracking-widest transition-all px-6 py-4 rounded-xl">
                         <svg v-if="isCompleted" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                         <svg v-else class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         {{ isCompleted ? 'Lesson Completed' : 'Mark as Complete' }}
                      </button>
-                     <button @click="nextLesson" class="bg-gray-900 text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl hover:-translate-y-0.5">Next Lesson &rarr;</button>
+                     <button @click="nextLesson" class="w-full sm:w-auto bg-gray-900 text-white px-10 py-4 rounded-xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl hover:-translate-y-0.5 flex items-center justify-center">
+                        Next Lesson <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                     </button>
                   </div>
                </div>
 
@@ -515,20 +517,20 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-/* ERROR-FREE RAW CSS FOR RICH TEXT */
-.rich-text-container { color: #374151; line-height: 1.7; max-width: 56rem; margin-left: auto; margin-right: auto; font-size: 16px; }
-.rich-text-container :deep(h1) { font-size: 2.25rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; }
-.rich-text-container :deep(h2) { font-size: 1.5rem; font-weight: 800; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; }
-.rich-text-container :deep(h3) { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 0.75rem; margin-top: 1.25rem; }
-.rich-text-container :deep(p) { margin-bottom: 1.25rem; }
-.rich-text-container :deep(ul) { list-style-type: disc; list-style-position: inside; margin-bottom: 1.25rem; padding-left: 1rem; }
-.rich-text-container :deep(ol) { list-style-type: decimal; list-style-position: inside; margin-bottom: 1.25rem; padding-left: 1rem; }
-.rich-text-container :deep(li) { margin-bottom: 0.5rem; }
-.rich-text-container :deep(a) { color: #2563eb; text-decoration: none; font-weight: 600; }
-.rich-text-container :deep(a:hover) { text-decoration: underline; }
-.rich-text-container :deep(blockquote) { border-left: 4px solid #2563eb; background-color: #eff6ff; padding: 1.25rem; margin-bottom: 1.25rem; font-style: italic; color: #4b5563; border-top-right-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
-.rich-text-container :deep(code) { background-color: #f3f4f6; color: #db2777; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.875rem; font-family: monospace; font-weight: 600;}
-.rich-text-container :deep(pre) { background-color: #111827; color: #f3f4f6; padding: 1.25rem; border-radius: 0.75rem; margin-bottom: 1.25rem; overflow-x: auto; font-size: 0.875rem; font-family: monospace; }
+/* ERROR-FREE RAW CSS FOR RICH TEXT - OPTIMIZED FOR READABILITY */
+.rich-text-container { color: #1f2937; line-height: 1.8; max-width: 850px; margin-left: auto; margin-right: auto; font-size: 1.125rem; }
+.rich-text-container :deep(h1) { font-size: 2.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; line-height: 1.2; }
+.rich-text-container :deep(h2) { font-size: 1.875rem; font-weight: 800; color: #111827; margin-bottom: 1.25rem; margin-top: 2rem; line-height: 1.3; }
+.rich-text-container :deep(h3) { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.4; }
+.rich-text-container :deep(p) { margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+.rich-text-container :deep(ul) { list-style-type: disc; list-style-position: outside; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.rich-text-container :deep(ol) { list-style-type: decimal; list-style-position: outside; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.rich-text-container :deep(li) { margin-bottom: 0.75rem; padding-left: 0.5rem; }
+.rich-text-container :deep(a) { color: #2563eb; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: border-color 0.2s; }
+.rich-text-container :deep(a:hover) { border-bottom-color: #2563eb; }
+.rich-text-container :deep(blockquote) { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: 1.5rem; margin-bottom: 1.5rem; font-style: italic; color: #374151; border-radius: 0 1rem 1rem 0; font-size: 1.25rem; }
+.rich-text-container :deep(code) { background-color: #f1f5f9; color: #db2777; padding: 0.2rem 0.4rem; border-radius: 0.375rem; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600;}
+.rich-text-container :deep(pre) { background-color: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; overflow-x: auto; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
 .rich-text-container :deep(pre code) { background-color: transparent; color: inherit; padding: 0; font-weight: 400;}
-.rich-text-container :deep(img) { max-width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 1.25rem; }
+.rich-text-container :deep(img) { max-width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); margin-bottom: 2rem; margin-top: 1rem; }
 </style>
