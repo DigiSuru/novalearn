@@ -215,7 +215,7 @@
                </div>
                <div class="text-center md:text-left z-10">
                   <h4 class="text-2xl font-black text-gray-900">Suru Sir</h4>
-                  <p class="text-blue-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Computer Science</p>
+                  <p class="text-blue-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">PGT | CS & IP</p>
                   <p class="text-gray-500 text-sm font-medium leading-relaxed">Expert in Python, SQL, and core CS concepts. Suru Sir's logical approach makes complex programming feel like a game. Guaranteed logic builder.</p>
                </div>
             </div>
@@ -228,7 +228,7 @@
                </div>
                <div class="text-center md:text-left z-10">
                   <h4 class="text-2xl font-black text-gray-900">DP Sir</h4>
-                  <p class="text-purple-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">Head of Informatics Practices</p>
+                  <p class="text-purple-600 font-black text-xs uppercase tracking-widest mt-1 mb-4">PGT | IP</p>
                   <p class="text-gray-500 text-sm font-medium leading-relaxed">Master of Pandas, DataFrames, and Data Handling. DP Sir simplifies data science concepts for 12th graders, ensuring 100% board readiness.</p>
                </div>
             </div>
