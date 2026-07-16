@@ -271,27 +271,27 @@
             <h3 class="text-2xl font-black text-gray-800">No Exam Papers Yet</h3>
             <p class="text-gray-400 mt-2 font-medium">Previous year board papers and sample exams will appear here.</p>
          </div>
-         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div v-for="paper in papers" :key="paper.id" class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
-               <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-[4rem] -z-10 group-hover:scale-150 transition-transform"></div>
+         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            <div v-for="paper in papers" :key="paper.id" class="bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
+               <div class="absolute top-0 right-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-3xl md:rounded-bl-[4rem] -z-10 group-hover:scale-150 transition-transform"></div>
                <div>
-                  <div class="flex justify-between items-start mb-6">
-                     <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-indigo-100">Board Exam / Mock</span>
-                     <span v-if="paper.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                  <div class="flex justify-between items-start mb-4 md:mb-6">
+                     <span class="bg-indigo-50 text-indigo-600 px-2.5 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-indigo-100">Board Exam / Mock</span>
+                     <span v-if="paper.is_pro" class="bg-amber-100 text-amber-700 text-[9px] md:text-[10px] font-black px-2.5 py-1 md:px-3 md:py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-2.5 h-2.5 md:w-3 md:h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
                   </div>
-                  <h4 class="text-xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight mb-3">{{ paper.subject_name }}</h4>
-                  <p class="text-sm text-gray-500 font-medium mb-4">Year / Reference: {{ paper.semester }}</p>
+                  <h4 class="text-lg md:text-xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight mb-2 md:mb-3">{{ paper.subject_name }}</h4>
+                  <p class="text-xs md:text-sm text-gray-500 font-medium mb-3 md:mb-4">Year / Reference: {{ paper.semester }}</p>
                   
                   <!-- CRITICAL FIX: Ensure rich text instructions entered for Exam Papers are displayed to students -->
-                  <div v-if="paper.content" class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-6 text-sm text-gray-700 rich-text-container max-h-48 overflow-y-auto custom-scrollbar shadow-inner" v-html="paper.content"></div>
+                  <div v-if="paper.content" class="bg-gray-50/50 border border-gray-100 p-4 md:p-5 rounded-2xl mb-4 md:mb-6 text-xs md:text-sm text-gray-700 rich-text-container max-h-40 md:max-h-48 overflow-y-auto custom-scrollbar shadow-inner" v-html="paper.content"></div>
                </div>
                
-               <div v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="mt-8">
-                   <button @click="$router.push('/pricing')" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-amber-500 transition-all text-sm uppercase tracking-widest">Unlock Pro to Access</button>
+               <div v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="mt-4 md:mt-8">
+                   <button @click="$router.push('/pricing')" class="w-full bg-gray-900 text-white py-3 md:py-4 rounded-xl md:rounded-2xl font-black shadow-lg hover:bg-amber-500 transition-all text-xs md:text-sm uppercase tracking-widest">Unlock Pro to Access</button>
                </div>
-               <div v-else class="mt-8 flex gap-3">
-                   <a v-if="paper.file_url" :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-sm uppercase tracking-widest">Download Paper</a>
-                   <button v-if="user?.role === 'admin'" @click="handleDelete(paper.id)" class="px-4 bg-red-50 text-red-500 hover:bg-red-100 rounded-2xl transition-colors shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+               <div v-else class="mt-4 md:mt-8 flex flex-col sm:flex-row gap-2 md:gap-3">
+                   <a v-if="paper.file_url" :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-3 md:py-4 rounded-xl md:rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-xs md:text-sm uppercase tracking-widest">Download Paper</a>
+                   <button v-if="user?.role === 'admin'" @click="handleDelete(paper.id)" class="w-full sm:w-auto px-4 py-3 md:py-0 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl md:rounded-2xl transition-colors shadow-sm flex justify-center items-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                </div>
             </div>
          </div>
@@ -748,19 +748,19 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 /* ERROR-FREE RAW CSS FOR RICH TEXT - OPTIMIZED FOR READABILITY */
-.rich-text-container { color: #1f2937; line-height: 1.8; max-width: 850px; margin-left: auto; margin-right: auto; font-size: 1.125rem; }
-.rich-text-container :deep(h1) { font-size: 2.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; line-height: 1.2; }
-.rich-text-container :deep(h2) { font-size: 1.875rem; font-weight: 800; color: #111827; margin-bottom: 1.25rem; margin-top: 2rem; line-height: 1.3; }
-.rich-text-container :deep(h3) { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.4; }
+.rich-text-container { color: #1f2937; line-height: 1.8; max-width: 850px; margin-left: auto; margin-right: auto; font-size: clamp(1rem, 2.5vw, 1.125rem); word-break: break-word; }
+.rich-text-container :deep(h1) { font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; line-height: 1.2; }
+.rich-text-container :deep(h2) { font-size: clamp(1.5rem, 4vw, 1.875rem); font-weight: 800; color: #111827; margin-bottom: 1.25rem; margin-top: 2rem; line-height: 1.3; }
+.rich-text-container :deep(h3) { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 700; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.4; }
 .rich-text-container :deep(p) { margin-bottom: 1.5rem; letter-spacing: -0.01em; }
-.rich-text-container :deep(ul) { list-style-type: disc; list-style-position: outside; margin-bottom: 1.5rem; padding-left: 1.5rem; }
-.rich-text-container :deep(ol) { list-style-type: decimal; list-style-position: outside; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.rich-text-container :deep(ul) { list-style-type: disc; list-style-position: outside; margin-bottom: 1.5rem; padding-left: clamp(1rem, 3vw, 1.5rem); }
+.rich-text-container :deep(ol) { list-style-type: decimal; list-style-position: outside; margin-bottom: 1.5rem; padding-left: clamp(1rem, 3vw, 1.5rem); }
 .rich-text-container :deep(li) { margin-bottom: 0.75rem; padding-left: 0.5rem; }
-.rich-text-container :deep(a) { color: #2563eb; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: border-color 0.2s; }
+.rich-text-container :deep(a) { color: #2563eb; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: border-color 0.2s; word-break: break-all; }
 .rich-text-container :deep(a:hover) { border-bottom-color: #2563eb; }
-.rich-text-container :deep(blockquote) { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: 1.5rem; margin-bottom: 1.5rem; font-style: italic; color: #374151; border-radius: 0 1rem 1rem 0; font-size: 1.25rem; }
-.rich-text-container :deep(code) { background-color: #f1f5f9; color: #db2777; padding: 0.2rem 0.4rem; border-radius: 0.375rem; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600;}
-.rich-text-container :deep(pre) { background-color: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; overflow-x: auto; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
-.rich-text-container :deep(pre code) { background-color: transparent; color: inherit; padding: 0; font-weight: 400;}
+.rich-text-container :deep(blockquote) { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: clamp(1rem, 3vw, 1.5rem); margin-bottom: 1.5rem; font-style: italic; color: #374151; border-radius: 0 1rem 1rem 0; font-size: clamp(1.1rem, 2.5vw, 1.25rem); }
+.rich-text-container :deep(code) { background-color: #f1f5f9; color: #db2777; padding: 0.2rem 0.4rem; border-radius: 0.375rem; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600; word-break: break-word; }
+.rich-text-container :deep(pre) { background-color: #0f172a; color: #f8fafc; padding: clamp(1rem, 3vw, 1.5rem); border-radius: 1rem; margin-bottom: 1.5rem; overflow-x: auto; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
+.rich-text-container :deep(pre code) { background-color: transparent; color: inherit; padding: 0; font-weight: 400; word-break: normal; }
 .rich-text-container :deep(img) { max-width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); margin-bottom: 2rem; margin-top: 1rem; }
 </style>
