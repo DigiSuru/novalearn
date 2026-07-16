@@ -92,14 +92,23 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-         <div v-for="i in 3" :key="i" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm h-72 animate-pulse flex flex-col justify-between">
+      <div v-if="loading">
+         <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-700 px-6 py-4 rounded-2xl flex items-start gap-4">
+            <svg class="w-6 h-6 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             <div>
-               <div class="w-20 h-6 bg-gray-200 rounded-md mb-4"></div>
-               <div class="w-3/4 h-8 bg-gray-200 rounded-lg mb-2"></div>
-               <div class="w-1/2 h-8 bg-gray-200 rounded-lg"></div>
+               <p class="font-black text-sm">Waking up the server...</p>
+               <p class="text-xs font-medium mt-1">We're hosted on a free tier which goes to sleep when inactive. Please allow up to 50 seconds for the initial content to load. Thank you for your patience!</p>
             </div>
-            <div class="w-full h-12 bg-gray-100 rounded-xl mt-8"></div>
+         </div>
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div v-for="i in 3" :key="i" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm h-72 animate-pulse flex flex-col justify-between">
+               <div>
+                  <div class="w-20 h-6 bg-gray-200 rounded-md mb-4"></div>
+                  <div class="w-3/4 h-8 bg-gray-200 rounded-lg mb-2"></div>
+                  <div class="w-1/2 h-8 bg-gray-200 rounded-lg"></div>
+               </div>
+               <div class="w-full h-12 bg-gray-100 rounded-xl mt-8"></div>
+            </div>
          </div>
       </div>
 
