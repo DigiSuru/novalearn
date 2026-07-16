@@ -7,7 +7,7 @@
       <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"></div>
       <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
 
-      <div class="max-w-7xl mx-auto px-6 py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
         <div>
           <button @click="$router.push('/')" class="mb-6 flex items-center text-gray-400 hover:text-white transition-all text-sm font-bold tracking-widest uppercase">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -75,7 +75,7 @@
 
     <!-- Navigation Tabs -->
     <div class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm backdrop-blur-xl bg-white/90">
-       <div class="max-w-7xl mx-auto px-6 flex gap-8 overflow-x-auto no-scrollbar">
+       <div class="max-w-7xl mx-auto px-4 md:px-6 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
           <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
              Interactive Curriculum
@@ -104,7 +104,7 @@
        </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-6 mt-10">
+    <main class="max-w-7xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
       
       <!-- RESOURCES / CURRICULUM TAB -->
       <div v-if="activeTab === 'resources'" class="animate-in fade-in duration-500">
@@ -188,7 +188,7 @@
 
                <div v-else class="flex flex-col h-full">
                   <!-- Lesson Header -->
-                  <div class="p-8 lg:p-10 xl:p-12 border-b border-gray-100 flex justify-between items-start bg-white">
+                  <div class="p-4 sm:p-8 lg:p-10 xl:p-12 border-b border-gray-100 flex justify-between items-start bg-white">
                      <div>
                         <div class="flex items-center gap-3 mb-4">
                            <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
@@ -211,7 +211,7 @@
                   <div class="flex-grow p-6 sm:p-10 lg:p-12 xl:p-16 bg-gray-50/30">
                      
                      <!-- CRITICAL FIX: Ensure rich text renders flawlessly with optimized reading width -->
-                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-8 sm:p-12 lg:p-16 rounded-[2rem] border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
+                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-4 sm:p-8 lg:p-12 rounded-3xl md:rounded-[2rem] border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
                      
                      <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-8 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
                         <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -234,7 +234,7 @@
                         <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson utilizes a supplementary PDF document. Please download to view.</p>
                      </div>
                      
-                     <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-12 bg-white border border-blue-100 p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
+                     <div v-if="selectedTopic.file_url && !selectedTopic.file_url.endsWith('.mp4')" class="mt-8 md:mt-12 bg-white border border-blue-100 p-4 md:p-8 rounded-2xl md:rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
                         <div class="flex items-center gap-5">
                            <div class="w-14 h-14 bg-blue-50 rounded-2xl text-blue-600 flex items-center justify-center text-3xl shadow-inner border border-blue-100">📎</div>
                            <div>
@@ -248,7 +248,7 @@
                      </div>
                   </div>
 
-                  <div class="p-8 lg:p-10 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 z-10">
+                  <div class="p-4 sm:p-8 lg:p-10 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 z-10">
                      <button @click="markComplete" :class="isCompleted ? 'text-green-600 bg-green-50' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 bg-gray-50 border border-gray-200'" class="w-full sm:w-auto flex items-center justify-center font-black text-xs uppercase tracking-widest transition-all px-6 py-4 rounded-xl">
                         <svg v-if="isCompleted" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                         <svg v-else class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -344,14 +344,14 @@
       <!-- DISCUSSIONS TAB -->
       <div v-if="activeTab === 'discussion'" class="animate-in fade-in duration-500 max-w-4xl mx-auto">
          <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 overflow-hidden flex flex-col h-[75vh]">
-            <div class="p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
+            <div class="p-4 sm:p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
                <div>
                   <h3 class="font-black text-2xl text-gray-900 tracking-tight">Community Forum</h3>
                   <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Peer-to-peer learning.</p>
                </div>
             </div>
 
-            <div class="flex-grow overflow-y-auto p-8 space-y-6 custom-scrollbar" id="chat-box">
+            <div class="flex-grow overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar" id="chat-box">
                <div v-if="messages.length === 0" class="text-center py-20">
                   <div class="text-5xl mb-4 grayscale opacity-50">💬</div>
                   <h4 class="font-black text-gray-400">No discussions yet</h4>
@@ -397,7 +397,7 @@
             <p class="text-gray-400 mt-2 font-medium">Faculty hasn't published any mock exams for this course.</p>
          </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div v-for="q in quizzes" :key="q.id" class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-purple-500 hover:shadow-xl transition-all">
+            <div v-for="q in quizzes" :key="q.id" class="bg-white p-4 sm:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-purple-500 hover:shadow-xl transition-all">
                <div>
                   <div class="flex justify-between items-start mb-6">
                      <span class="bg-purple-50 text-purple-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-purple-100">Mock Exam</span>

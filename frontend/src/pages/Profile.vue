@@ -19,7 +19,7 @@
       <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden mb-8 transition-all">
         <div class="h-56 bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden text-white">
           <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-          <div class="absolute top-0 right-0 p-8 text-right flex flex-col items-end">
+          <div class="absolute top-0 right-0 p-4 md:p-8 text-right flex flex-col items-end">
              <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
                 <p class="text-[10px] font-black uppercase opacity-60 mb-1 tracking-widest">Platform Power Level</p>
                 <p class="text-2xl font-black text-blue-400">
@@ -75,11 +75,11 @@
         <button @click="activeTab = 'achievements'" :class="activeTab === 'achievements' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50'" class="px-6 py-3 rounded-2xl font-bold transition-all text-sm whitespace-nowrap">Achievements</button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
         
         <!-- Sidebar Widgets (Col 3) -->
         <div class="lg:col-span-3 space-y-6">
-          <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <div class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] shadow-sm border border-gray-100">
             <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Learning Metrics</h3>
             <div class="space-y-6">
               <div v-if="user?.role !== 'admin'" class="flex justify-between items-center mb-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
@@ -113,7 +113,7 @@
              <div class="space-y-4">
                 <h3 class="text-xl font-black text-gray-900">Enrolled Programs & Classes</h3>
                 <div v-if="enrolledCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div v-for="c in enrolledCourses" :key="c.id" class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all group flex flex-col justify-between">
+                   <div v-for="c in enrolledCourses" :key="c.id" class="bg-white p-4 md:p-8 rounded-2xl md:rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all group flex flex-col justify-between">
                       <div @click="$router.push(`/course/${c.id}`)" class="cursor-pointer mb-6">
                          <span class="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase border border-blue-100">{{ c.short_name }}</span>
                          <h4 class="text-2xl font-black text-gray-900 mt-4 leading-tight group-hover:text-blue-600 transition-colors">{{ c.course_name }}</h4>
@@ -133,7 +133,7 @@
                 <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
                   <h3 class="font-black text-gray-900">Recent Learning Activity</h3>
                 </div>
-                <div class="p-8">
+                <div class="p-4 md:p-8">
                   <div v-if="realStats.recent.length > 0" class="border-l-2 border-gray-100 ml-4 space-y-8">
                     <div v-for="act in realStats.recent" :key="act.accessed_at" class="relative pl-10 group">
                       <div class="absolute w-5 h-5 bg-white border-4 border-blue-600 rounded-full -left-[11px] top-0 shadow-sm"></div>
@@ -155,7 +155,7 @@
 
           <!-- STUDENT TAB: MY ASSESSMENTS -->
           <div v-if="activeTab === 'my_assessments'" class="animate-in fade-in duration-500 space-y-8">
-             <div class="bg-gray-900 p-8 rounded-[2.5rem] relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between">
+             <div class="bg-gray-900 p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between">
                 <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                 <div class="absolute right-0 top-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl"></div>
                 <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
@@ -212,7 +212,7 @@
 
           <!-- STUDENT TAB: LEADERBOARD -->
           <div v-if="activeTab === 'leaderboard'" class="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-             <div class="bg-gray-900 p-8 rounded-[2.5rem] relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between">
+             <div class="bg-gray-900 p-6 md:p-8 rounded-3xl md:rounded-[2.5rem] relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between">
                 <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                 <div class="absolute right-0 top-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
                 <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
@@ -265,20 +265,20 @@
           <!-- STUDENT TAB: ACHIEVEMENTS -->
           <div v-if="activeTab === 'achievements'" class="animate-in fade-in duration-500">
              <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <div class="bg-white p-8 rounded-[2.5rem] border-2 border-yellow-100 flex flex-col items-center text-center shadow-sm relative overflow-hidden group">
+                <div class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] border-2 border-yellow-100 flex flex-col items-center text-center shadow-sm relative overflow-hidden group">
                    <div class="absolute inset-0 bg-yellow-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                    <div class="text-6xl mb-4 animate-pulse relative">🥇</div>
                    <h5 class="font-black text-gray-900 text-lg relative">Enrolled</h5>
                    <p class="text-[10px] font-black text-yellow-600 uppercase mt-2 tracking-widest relative">Unlocked</p>
                 </div>
-                <div :class="realStats.totalDownloaded >= 10 ? 'border-indigo-100 opacity-100 shadow-xl' : 'border-gray-100 opacity-40'" class="bg-white p-8 rounded-[2.5rem] border-2 flex flex-col items-center text-center transition-all">
+                <div :class="realStats.totalDownloaded >= 10 ? 'border-indigo-100 opacity-100 shadow-xl' : 'border-gray-100 opacity-40'" class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] border-2 flex flex-col items-center text-center transition-all">
                    <div :class="realStats.totalDownloaded >= 10 ? 'grayscale-0' : 'grayscale'" class="text-6xl mb-4 transition-all">📚</div>
                    <h5 class="font-black text-gray-900 text-lg">Scholar</h5>
                    <p class="text-[10px] font-black uppercase mt-2 tracking-widest" :class="realStats.totalDownloaded >= 10 ? 'text-indigo-600' : 'text-gray-400'">
                       {{ realStats.totalDownloaded >= 10 ? 'Unlocked' : '10 Units Required' }}
                    </p>
                 </div>
-                <div :class="realStats.totalCorrectAnswers >= 50 ? 'border-green-100 opacity-100 shadow-xl' : 'border-gray-100 opacity-40'" class="bg-white p-8 rounded-[2.5rem] border-2 flex flex-col items-center text-center transition-all">
+                <div :class="realStats.totalCorrectAnswers >= 50 ? 'border-green-100 opacity-100 shadow-xl' : 'border-gray-100 opacity-40'" class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] border-2 flex flex-col items-center text-center transition-all">
                    <div :class="realStats.totalCorrectAnswers >= 50 ? 'grayscale-0' : 'grayscale'" class="text-6xl mb-4 transition-all">🎯</div>
                    <h5 class="font-black text-gray-900 text-lg">Sharpshooter</h5>
                    <p class="text-[10px] font-black uppercase mt-2 tracking-widest" :class="realStats.totalCorrectAnswers >= 50 ? 'text-green-600' : 'text-gray-400'">
@@ -349,7 +349,7 @@
           </div>
 
           <div v-if="activeTab === 'programs'" class="animate-in fade-in duration-500 space-y-8">
-             <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+             <div class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] shadow-sm border border-gray-100">
                 <h2 class="text-xl font-black text-gray-900 mb-6">Program & Class Matrix</h2>
                 <form @submit.prevent="handleAddCourse" class="flex flex-col md:flex-row gap-4">
                    <input v-model="courseForm.course_name" placeholder="Program / Class Name (e.g. 11th Science, BCA)" class="flex-grow border-2 border-gray-50 p-4 rounded-xl focus:border-blue-600 outline-none font-bold text-sm" required>
@@ -359,7 +359,7 @@
                 </form>
              </div>
              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div v-for="c in allCourses" :key="c.id" class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative group overflow-hidden">
+                <div v-for="c in allCourses" :key="c.id" class="bg-white p-4 md:p-8 rounded-2xl md:rounded-[2rem] border border-gray-100 shadow-sm relative group overflow-hidden">
                    <div class="relative">
                       <div class="flex justify-between items-start mb-4">
                          <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest">{{ c.short_name }}</span>
@@ -379,7 +379,7 @@
           </div>
 
           <div v-if="activeTab === 'assessments'" class="animate-in fade-in duration-500 space-y-8">
-             <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+             <div class="bg-white p-4 md:p-8 rounded-3xl md:rounded-[2.5rem] shadow-sm border border-gray-100">
                 <h2 class="text-2xl font-black text-gray-900 mb-2">Assessment Studio</h2>
                 <p class="text-gray-500 text-sm mb-6 font-medium">Create mock exams, chapter quizzes, and topic tests for specific programs or classes.</p>
                 
@@ -524,7 +524,7 @@
 
     <!-- Add Question Modal -->
     <div v-if="showQuestionModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-      <div class="bg-white rounded-[2rem] p-8 w-full max-w-xl shadow-2xl border border-white/20 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+      <div class="bg-white rounded-2xl md:rounded-[2rem] p-4 md:p-8 w-full max-w-xl shadow-2xl border border-white/20 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
            <h3 class="text-2xl font-black text-gray-900">Add MCQ Question</h3>
            <button @click="showQuestionModal = false" class="text-gray-400 hover:text-gray-900"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>

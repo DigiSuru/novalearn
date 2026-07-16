@@ -4,7 +4,7 @@
         
         <!-- Left: Upload Settings Matrix -->
         <div class="w-full lg:w-1/3 bg-white border-r border-gray-200 shadow-sm z-10 flex flex-col h-[800px]">
-          <div class="p-8 border-b border-gray-100 bg-white sticky top-0 z-20">
+          <div class="p-4 md:p-8 border-b border-gray-100 bg-white sticky top-0 z-20">
              <div class="flex items-center mb-2">
                  <button @click="$router.push('/profile')" class="mr-6 p-2.5 bg-gray-50 text-gray-400 rounded-xl hover:text-blue-600 hover:bg-blue-50 transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -16,7 +16,7 @@
               </div>
            </div>
 
-           <div class="p-8 flex-grow overflow-y-auto custom-scrollbar">
+           <div class="p-4 md:p-8 flex-grow overflow-y-auto custom-scrollbar">
             <form id="uploadForm" @submit.prevent="handleUpload" class="space-y-8">
               
               <!-- Content Type Selector (NEW) -->
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Right: Advanced Rich Text Editor -->
-        <div class="w-full lg:w-2/3 p-10 flex flex-col h-[800px]">
+        <div class="w-full lg:w-2/3 p-4 md:p-10 flex flex-col h-[800px]">
            <div class="flex justify-between items-center mb-6">
               <h2 class="text-xl font-black text-gray-900">Rich Text Composition</h2>
               <button form="uploadForm" type="submit" :disabled="loading" class="bg-gray-900 text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-blue-600 transition-all shadow-lg disabled:opacity-50">
@@ -130,7 +130,7 @@
               <!-- Content Editable Area -->
               <div 
                 ref="editor" 
-                class="flex-grow p-8 outline-none overflow-y-auto custom-scrollbar rich-text-editor"
+                class="flex-grow p-4 md:p-8 outline-none overflow-y-auto custom-scrollbar rich-text-editor"
                 contenteditable="true" 
                 @input="updateContent"
                 placeholder="Start typing your rich-text lesson here..."

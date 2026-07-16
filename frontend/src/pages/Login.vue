@@ -23,7 +23,7 @@
     </div>
 
     <!-- Right Side: Login Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative z-10">
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-12 relative z-10">
       <!-- Mobile logo -->
       <div class="absolute top-8 left-8 lg:hidden flex items-center gap-2 cursor-pointer" @click="$router.push('/')">
          <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xl italic shadow-lg">N</div>

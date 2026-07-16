@@ -11,7 +11,7 @@
 
       <!-- Header / Nav -->
       <header class="relative z-20 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
           <div class="flex items-center gap-3">
              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -30,7 +30,7 @@
       </header>
 
       <!-- Hero Content -->
-      <div class="relative z-10 max-w-7xl mx-auto px-6 py-24 md:py-32 flex flex-col items-center text-center">
+      <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-32 flex flex-col items-center text-center">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
            <span class="text-xs font-black text-gray-300 uppercase tracking-widest">Admissions Open for 2026-2027</span>
@@ -78,7 +78,7 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-20 w-full" id="programs">
+    <main class="flex-grow max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20 w-full" id="programs">
       
       <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
          <div>
@@ -93,7 +93,7 @@
 
       <!-- Loading State -->
       <div v-if="loading">
-         <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-700 px-6 py-4 rounded-2xl flex items-start gap-4">
+         <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-700 px-4 md:px-6 py-4 rounded-2xl flex items-start gap-4">
             <svg class="w-6 h-6 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
             <div>
                <p class="font-black text-sm">Waking up the server...</p>
@@ -101,7 +101,7 @@
             </div>
          </div>
          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div v-for="i in 3" :key="i" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm h-72 animate-pulse flex flex-col justify-between">
+            <div v-for="i in 3" :key="i" class="bg-white rounded-3xl md:rounded-[2.5rem] p-4 md:p-8 border border-gray-100 shadow-sm h-72 animate-pulse flex flex-col justify-between">
                <div>
                   <div class="w-20 h-6 bg-gray-200 rounded-md mb-4"></div>
                   <div class="w-3/4 h-8 bg-gray-200 rounded-lg mb-2"></div>
@@ -114,7 +114,7 @@
 
       <!-- Course Grid -->
       <div v-else-if="courses.length > 0 && !searchQuery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="course in courses" :key="course.id" class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden">
+        <div v-for="course in courses" :key="course.id" class="bg-white rounded-3xl md:rounded-[2.5rem] p-4 md:p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 transition-all duration-300 group flex flex-col justify-between relative overflow-hidden">
           <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-purple-50 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-500"></div>
           <div>
             <div class="flex items-center justify-between mb-6">
@@ -217,7 +217,7 @@
 
          <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
             <!-- Suru Card -->
-            <div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
+            <div class="bg-white rounded-3xl md:rounded-[3rem] p-6 md:p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-blue-300 transition-colors">
                <div class="absolute top-0 right-0 w-40 h-40 bg-blue-50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
                <div class="w-32 h-32 flex-shrink-0 bg-blue-600 rounded-full flex items-center justify-center font-black text-5xl text-white shadow-2xl border-4 border-white z-10">
                   S
@@ -230,7 +230,7 @@
             </div>
 
             <!-- DP Card -->
-            <div class="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-purple-300 transition-colors">
+            <div class="bg-white rounded-3xl md:rounded-[3rem] p-6 md:p-10 border border-gray-100 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group hover:border-purple-300 transition-colors">
                <div class="absolute top-0 right-0 w-40 h-40 bg-purple-50 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
                <div class="w-32 h-32 flex-shrink-0 bg-purple-600 rounded-full flex items-center justify-center font-black text-5xl text-white shadow-2xl border-4 border-white z-10">
                   DP
@@ -252,7 +252,7 @@
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
       <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px]"></div>
       
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
          
          <!-- Brand Column -->
          <div class="lg:pr-8">
@@ -314,7 +314,7 @@
 
       </div>
 
-      <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 mt-8 md:mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
          <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">© {{ new Date().getFullYear() }} Suru x DP Academy. All rights reserved.</p>
          <div class="flex space-x-6">
             <a href="#" class="text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest">Privacy Policy</a>
