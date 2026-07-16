@@ -1,20 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50/50 pb-24 md:pb-12 font-sans relative pt-14 md:pt-16">
+  <div class="min-h-screen bg-gray-50/50 pb-24 md:pb-12 font-sans relative">
     
-    <!-- Fixed App Header -->
-    <header class="fixed top-0 left-0 right-0 h-14 md:h-16 bg-gray-950 border-b border-gray-800 z-50 flex items-center px-4 md:px-6 shadow-xl">
-      <button @click="$router.push('/')" class="flex items-center text-gray-400 hover:text-white transition-colors text-xs md:text-sm font-black tracking-widest uppercase">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        Back to Catalog
-      </button>
-      <div class="ml-auto flex items-center gap-2">
-         <div class="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-         </div>
-         <h1 class="font-black text-sm md:text-base tracking-tight text-white leading-none hidden sm:block">Suru <span class="text-gray-500 font-medium px-1">x</span> DP</h1>
-      </div>
-    </header>
-    
+
     <!-- Premium Course Hero -->
     <div class="bg-gray-900 text-white relative overflow-hidden">
       <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -61,7 +48,7 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="hidden md:block bg-white border-b border-gray-200 sticky top-14 md:top-16 z-40 shadow-sm backdrop-blur-xl bg-white/90">
+    <div class="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm backdrop-blur-xl bg-white/90">
        <div class="max-w-7xl mx-auto px-4 md:px-6 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
           <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -108,7 +95,7 @@
          <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
             
             <!-- Left Sidebar: Curriculum Navigator (Sticky for easy navigation) -->
-            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-40 md:max-h-[calc(100vh-11rem)] flex flex-col flex-shrink-0 z-20">
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
                <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
                   <h3 class="font-black text-gray-900 text-base md:text-lg">Course Syllabus</h3>
                   <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
@@ -261,7 +248,7 @@
          <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
             
             <!-- Left Sidebar: Papers Navigator -->
-            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-40 md:max-h-[calc(100vh-11rem)] flex flex-col flex-shrink-0 z-20">
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
                <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
                   <h3 class="font-black text-gray-900 text-base md:text-lg">Exam Papers</h3>
                   <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ papers.length }} Total Papers</p>
