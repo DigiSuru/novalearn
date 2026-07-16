@@ -5,7 +5,7 @@
     <header class="md:hidden fixed top-0 left-0 right-0 h-14 bg-gray-900/95 backdrop-blur-md z-50 flex items-center justify-between px-4 border-b border-gray-800 shadow-lg">
       <div class="flex items-center gap-3">
          <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">{{ course?.short_name || 'Course' }}</span>
-         <span class="text-[10px] font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-1.5 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
+         <!-- Removed Active Community Badge -->
       </div>
       <button @click="$router.push('/')" class="text-gray-400 hover:text-white transition-colors p-1">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -26,10 +26,10 @@
           </button>
           <div class="hidden md:flex items-center gap-3 mb-3 flex-wrap">
              <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest backdrop-blur-md">{{ course?.short_name }}</span>
-             <span class="text-xs font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
+             <!-- Removed Active Community Badge -->
           </div>
           <h1 class="hidden md:block text-2xl md:text-4xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
-          <p class="text-sm md:text-base text-gray-400 mt-0 md:mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
+          <p class="text-sm md:text-base text-gray-400 mt-0 md:mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and direct instructor support.</p>
         </div>
 
         <!-- Enrollment Card -->
@@ -77,8 +77,8 @@
           </button>
           
           <button @click="activeTab = 'discussion'" :class="activeTab === 'discussion' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
-             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-             Community ({{ messages.length }})
+             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+             Support
           </button>
           
           <button @click="activeTab = 'quizzes'" :class="activeTab === 'quizzes' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
@@ -415,50 +415,7 @@
                </a>
             </div>
          </div>
-         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[60vh] md:h-[70vh]">
-            <div class="p-4 sm:p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
-               <div>
-                  <h3 class="font-black text-2xl text-gray-900 tracking-tight">Community Forum</h3>
-                  <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Peer-to-peer learning.</p>
-               </div>
-            </div>
 
-            <div class="flex-grow overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar" id="chat-box">
-               <div v-if="messages.length === 0" class="text-center py-20">
-                  <div class="text-5xl mb-4 grayscale opacity-50">💬</div>
-                  <h4 class="font-black text-gray-400">No discussions yet</h4>
-                  <p class="text-sm text-gray-400 font-medium">Be the first to start the conversation.</p>
-               </div>
-               <div v-for="msg in messages" :key="msg.id" class="flex items-start space-x-4">
-                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center font-black text-blue-600 shadow-sm flex-shrink-0 text-lg">
-                     {{ msg.name.charAt(0).toUpperCase() }}
-                  </div>
-                  <div class="flex-grow">
-                     <div class="flex items-center space-x-3 mb-1">
-                        <span class="text-sm font-black text-gray-900">{{ msg.name }}</span>
-                        <span v-if="msg.role === 'admin'" class="bg-red-100 text-red-600 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Faculty</span>
-                        <span class="text-[10px] text-gray-400 font-bold uppercase">{{ formatTime(msg.created_at) }}</span>
-                     </div>
-                     <div class="bg-gray-50 p-5 rounded-2xl rounded-tl-none border border-gray-100 text-sm text-gray-700 leading-relaxed max-w-2xl font-medium">
-                        {{ msg.message }}
-                     </div>
-                  </div>
-               </div>
-            </div>
-
-            <div class="p-6 border-t border-gray-100 bg-white">
-               <form v-if="user" @submit.prevent="sendMessage" class="relative flex items-center">
-                  <input v-model="newMessage" placeholder="Type your question or insight here..." class="w-full bg-gray-50 border border-gray-200 p-5 pr-16 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600 font-bold text-sm transition-all">
-                  <button type="submit" :disabled="!newMessage.trim()" class="absolute right-3 p-3 bg-blue-600 text-white rounded-xl shadow-lg hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100">
-                     <svg class="w-5 h-5 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
-                  </button>
-               </form>
-               <div v-else class="text-center p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                  <p class="font-bold text-gray-500 text-sm mb-2">Join the community to participate.</p>
-                  <router-link to="/login" class="bg-gray-900 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest inline-block hover:bg-blue-600 transition-colors">Sign In</router-link>
-               </div>
-            </div>
-         </div>
       </div>
 
       <!-- QUIZZES TAB -->
