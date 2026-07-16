@@ -48,7 +48,7 @@
         </div>
 
         <!-- Enrollment Card -->
-        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-4 md:p-6 rounded-2xl md:rounded-[2rem] w-full md:w-80 shadow-2xl mt-4 md:mt-0">
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-4 md:p-6 rounded-2xl md:rounded-2xl w-full md:w-80 shadow-2xl mt-4 md:mt-0">
            <div v-if="!isEnrolled && user" class="text-center">
               <p class="text-sm font-bold text-gray-300 mb-2 md:mb-4">Ready to start learning?</p>
               <button @click="handleEnroll" :disabled="isEnrolling" class="w-full bg-white text-gray-900 py-2.5 md:py-3.5 rounded-xl font-black hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 disabled:opacity-50 shadow-lg text-sm md:text-base">
@@ -110,7 +110,7 @@
          
          <div v-if="loading" class="text-center py-20"><div class="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div></div>
 
-         <div v-else-if="Object.keys(filteredGroupedNotes).length === 0" class="bg-white p-20 rounded-[3rem] border-2 border-dashed border-gray-200 text-center">
+         <div v-else-if="Object.keys(filteredGroupedNotes).length === 0" class="bg-white p-20 rounded-2xl border-2 border-dashed border-gray-200 text-center">
             <div class="text-6xl mb-6">📝</div>
             <h3 class="text-2xl font-black text-gray-800">No Content Yet</h3>
             <p class="text-gray-400 mt-2 font-medium">The curriculum is currently being built by instructors.</p>
@@ -120,7 +120,7 @@
          <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
             
             <!-- Left Sidebar: Curriculum Navigator (Sticky for easy navigation) -->
-            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
                <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
                   <h3 class="font-black text-gray-900 text-base md:text-lg">Course Syllabus</h3>
                   <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
@@ -167,7 +167,7 @@
             </div>
 
             <!-- Right Main Area: Content Viewer (Expanded fully for natural scrolling) -->
-            <div class="w-full lg:w-2/3 xl:w-3/4 bg-white rounded-[2rem] border border-gray-200 shadow-sm flex flex-col relative overflow-hidden">
+            <div class="w-full lg:w-2/3 xl:w-3/4 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col relative overflow-hidden">
                
                <div v-if="!selectedTopic" class="m-auto text-center p-20">
                   <div class="text-7xl mb-6 opacity-80">🎓</div>
@@ -176,7 +176,7 @@
                </div>
 
                <!-- PRO GATING LOGIC -->
-               <div v-else-if="selectedTopic.is_pro && !user?.is_pro && user?.role !== 'admin'" class="m-auto text-center p-12 bg-gray-50 rounded-[2rem] border border-gray-200 m-8 shadow-inner">
+               <div v-else-if="selectedTopic.is_pro && !user?.is_pro && user?.role !== 'admin'" class="m-auto text-center p-12 bg-gray-50 rounded-2xl border border-gray-200 m-8 shadow-inner">
                   <div class="text-6xl mb-6">🔒</div>
                   <h2 class="text-3xl font-black text-gray-900 mb-2">Premium Lesson</h2>
                   <p class="text-gray-500 mb-8 max-w-md mx-auto">This content is reserved for Pro Elite members. Upgrade to access full rich-text lessons, ad-free learning, and downloads.</p>
@@ -210,9 +210,9 @@
                   <div class="flex-grow p-6 sm:p-10 lg:p-12 xl:p-16 bg-gray-50/30">
                      
                      <!-- CRITICAL FIX: Ensure rich text renders flawlessly with optimized reading width -->
-                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-4 sm:p-8 lg:p-12 rounded-3xl md:rounded-[2rem] border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
+                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-4 sm:p-8 lg:p-12 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
                      
-                     <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-8 rounded-[2rem] overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
+                     <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-8 rounded-2xl overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
                         <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                            <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
                            <span class="text-[10px] font-black uppercase tracking-widest">Live Tracking Active</span>
@@ -227,7 +227,7 @@
                      </div>
 
                      <!-- Only show the document placeholder if there is NO rich text AND NO video -->
-                     <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-16 border-2 border-dashed border-gray-200 rounded-[2rem] bg-white">
+                     <div v-else-if="selectedTopic.file_url && !selectedTopic.content" class="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-white">
                         <div class="text-6xl mb-4">📄</div>
                         <h3 class="text-xl font-black text-gray-800">Document Lesson</h3>
                         <p class="text-gray-500 text-sm mt-2 max-w-sm mx-auto">This lesson utilizes a supplementary PDF document. Please download to view.</p>
@@ -265,13 +265,13 @@
 
       <!-- EXAM PAPERS TAB (WITH NEW RICH TEXT SUPPORT) -->
       <div v-if="activeTab === 'papers'" class="animate-in fade-in duration-500">
-         <div v-if="papers.length === 0" class="bg-white p-20 rounded-[3rem] border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
+         <div v-if="papers.length === 0" class="bg-white p-20 rounded-2xl border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
             <div class="text-6xl mb-6">📄</div>
             <h3 class="text-2xl font-black text-gray-800">No Exam Papers Yet</h3>
             <p class="text-gray-400 mt-2 font-medium">Previous year board papers and sample exams will appear here.</p>
          </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            <div v-for="paper in papers" :key="paper.id" class="bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
+            <div v-for="paper in papers" :key="paper.id" class="bg-white p-5 md:p-8 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
                <div class="absolute top-0 right-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-3xl md:rounded-bl-[4rem] -z-10 group-hover:scale-150 transition-transform"></div>
                <div>
                   <div class="flex justify-between items-start mb-4 md:mb-6">
@@ -298,7 +298,7 @@
 
       <!-- NEW: PYTHON CODE LAB TAB -->
       <div v-if="activeTab === 'codelab'" class="animate-in fade-in duration-500 max-w-6xl mx-auto">
-         <div class="bg-gray-950 rounded-[2.5rem] shadow-2xl border border-gray-800 overflow-hidden flex flex-col h-[75vh]">
+         <div class="bg-gray-950 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden flex flex-col h-[75vh]">
             <!-- Code Lab Header -->
             <div class="p-6 border-b border-gray-800 bg-gray-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                <div>
@@ -340,9 +340,30 @@
          </div>
       </div>
 
-      <!-- DISCUSSIONS TAB -->
-      <div v-if="activeTab === 'discussion'" class="animate-in fade-in duration-500 max-w-4xl mx-auto">
-         <div class="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 overflow-hidden flex flex-col h-[75vh]">
+      <!-- COMMUNITY / DISCUSSION TAB -->
+      <div v-if="activeTab === 'discussion'" class="max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500 flex flex-col gap-6">
+         <!-- SUPPORT SECTION -->
+         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+               <h3 class="font-black text-gray-900 text-lg">Need Direct Support?</h3>
+               <p class="text-xs text-gray-500 font-bold mt-1">Connect with the instructor on our official channels.</p>
+            </div>
+            <div class="flex items-center gap-3">
+               <!-- WhatsApp -->
+               <a href="https://wa.me/+919252145887" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-green-50 border border-green-100 text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-sm">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+               </a>
+               <!-- Telegram -->
+               <a href="https://t.me/cswithsuru" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 border border-blue-100 text-blue-500 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.285-.346-.094l-6.404 4.027-2.76-.864c-.602-.188-.616-.602.126-.89l10.793-4.156c.5-.188.948.113.82.908z"/></svg>
+               </a>
+               <!-- Instagram -->
+               <a href="https://instagram.com/cswithsuru" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-full bg-pink-50 border border-pink-100 text-pink-500 hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-pink-500 hover:to-purple-500 hover:text-white transition-all shadow-sm">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+               </a>
+            </div>
+         </div>
+         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[60vh] md:h-[70vh]">
             <div class="p-4 sm:p-8 border-b border-gray-50 bg-gray-50/80 backdrop-blur-md flex items-center justify-between">
                <div>
                   <h3 class="font-black text-2xl text-gray-900 tracking-tight">Community Forum</h3>
@@ -390,13 +411,13 @@
 
       <!-- QUIZZES TAB -->
       <div v-if="activeTab === 'quizzes'" class="animate-in slide-in-from-bottom-4 duration-500">
-         <div v-if="quizzes.length === 0" class="bg-white p-20 rounded-[3rem] border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
+         <div v-if="quizzes.length === 0" class="bg-white p-20 rounded-2xl border-2 border-dashed border-gray-200 text-center max-w-3xl mx-auto">
             <div class="text-6xl mb-6">📝</div>
             <h3 class="text-2xl font-black text-gray-800">No Assessments Yet</h3>
             <p class="text-gray-400 mt-2 font-medium">Faculty hasn't published any mock exams for this course.</p>
          </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div v-for="q in quizzes" :key="q.id" class="bg-white p-4 sm:p-8 rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-purple-500 hover:shadow-xl transition-all">
+            <div v-for="q in quizzes" :key="q.id" class="bg-white p-4 sm:p-8 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-purple-500 hover:shadow-xl transition-all">
                <div>
                   <div class="flex justify-between items-start mb-6">
                      <span class="bg-purple-50 text-purple-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-purple-100">Mock Exam</span>
