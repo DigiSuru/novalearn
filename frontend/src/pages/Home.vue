@@ -246,6 +246,48 @@
 
     </main>
 
+    <!-- Nova AI Assistant Button -->
+    <button @click="showAiChat = true" v-if="!showAiChat" class="fixed bottom-8 right-8 bg-gray-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 group border border-gray-700 flex items-center gap-3">
+       <span class="text-2xl animate-pulse">✨</span>
+       <span class="font-black text-sm tracking-widest uppercase pr-2 group-hover:block hidden">Ask Nova AI</span>
+    </button>
+
+    <!-- Nova AI Chat Window -->
+    <div v-if="showAiChat" class="fixed bottom-8 right-8 w-80 md:w-96 h-[500px] bg-white/90 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-300">
+       <div class="bg-gray-900 p-4 flex justify-between items-center text-white">
+          <div class="flex items-center gap-3">
+             <span class="text-2xl">✨</span>
+             <div>
+                <h3 class="font-black text-sm uppercase tracking-widest">Nova AI</h3>
+                <p class="text-[10px] text-blue-400 font-bold">24/7 Teaching Assistant</p>
+             </div>
+          </div>
+          <button @click="showAiChat = false" class="text-gray-400 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+       </div>
+       
+       <div ref="aiChatBox" class="flex-grow p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4 bg-gray-50/50">
+          <div v-for="(msg, idx) in aiMessages" :key="idx" :class="msg.role === 'user' ? 'self-end bg-blue-600 text-white rounded-tr-sm' : 'self-start bg-white border border-gray-200 text-gray-800 rounded-tl-sm'" class="max-w-[85%] p-3.5 rounded-2xl text-sm shadow-sm leading-relaxed whitespace-pre-wrap">
+             {{ msg.text }}
+          </div>
+          <div v-if="isAiTyping" class="self-start bg-white border border-gray-200 text-gray-500 p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm flex items-center gap-1.5">
+             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
+          </div>
+       </div>
+
+       <form @submit.prevent="askAi" class="p-3 bg-white border-t border-gray-100">
+          <div class="relative">
+             <input v-model="aiQuery" placeholder="Ask Nova anything..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3.5 pl-4 pr-12 text-sm font-medium outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-inner">
+             <button type="submit" :disabled="!aiQuery.trim() || isAiTyping" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center disabled:opacity-50 hover:bg-blue-700 transition-colors shadow-md">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+             </button>
+          </div>
+       </form>
+    </div>
+
     <!-- ADVANCED MEGA FOOTER -->
     <footer class="bg-gray-950 text-white mt-auto pt-24 pb-12 relative overflow-hidden">
       <!-- Background Footer Accents -->
@@ -326,7 +368,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import api from '../services/api';
 
 const user = ref(null);
@@ -350,6 +392,74 @@ const handleSearch = () => {
             console.error("Search failed", error);
         }
     }, 300);
+};
+
+// AI Assistant State
+const showAiChat = ref(false);
+const aiQuery = ref('');
+const isAiTyping = ref(false);
+const aiChatBox = ref(null);
+const aiMessages = ref([
+  { role: 'ai', text: 'Hi there! I am Nova, your AI guide. Ask me anything about NovaLearn!' }
+]);
+
+const scrollAiChat = () => {
+  nextTick(() => {
+    if (aiChatBox.value) aiChatBox.value.scrollTop = aiChatBox.value.scrollHeight;
+  });
+};
+
+const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error("API request failed");
+    return response;
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2);
+    }
+    throw err;
+  }
+};
+
+const askAi = async () => {
+  if (!aiQuery.value.trim()) return;
+  
+  const userText = aiQuery.value;
+  aiMessages.value.push({ role: 'user', text: userText });
+  aiQuery.value = '';
+  isAiTyping.value = true;
+  scrollAiChat();
+
+  try {
+    const apiKey = ""; // Execution environment injects API key automatically
+    const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    let systemContext = "You are Nova, a helpful AI assistant for the NovaLearn platform. Keep answers concise, helpful, and encouraging. Use plain text formatting.";
+    
+    const payload = {
+        contents: [{ parts: [{ text: userText }] }],
+        systemInstruction: { parts: [{ text: systemContext }] }
+    };
+
+    const response = await fetchWithRetry(modelUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, my neural network is resting. Please try again.";
+
+    aiMessages.value.push({ role: 'ai', text: aiText });
+  } catch (error) {
+    console.error("Nova AI Error:", error);
+    aiMessages.value.push({ role: 'ai', text: "Oops! My connection to the matrix dropped. Please try asking again in a moment." });
+  } finally {
+    isAiTyping.value = false;
+    scrollAiChat();
+  }
 };
 
 onMounted(async () => {

@@ -17,11 +17,11 @@
              <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest backdrop-blur-md">{{ course?.short_name }}</span>
              <span class="text-xs font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
           </div>
-          <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
-          <p class="text-gray-400 mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
+          <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
+          <p class="text-sm md:text-base text-gray-400 mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
           
           <!-- OFFICIAL CHANNELS & SUPPORT SECTION -->
-          <div class="mt-8 flex flex-wrap items-center gap-4">
+          <div class="hidden md:flex mt-8 flex-wrap items-center gap-4">
              <span class="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2">Official Channels:</span>
              
              <!-- WhatsApp -->
@@ -48,26 +48,25 @@
         </div>
 
         <!-- Enrollment Card -->
-        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-[2rem] w-full md:w-80 shadow-2xl">
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-4 md:p-6 rounded-2xl md:rounded-[2rem] w-full md:w-80 shadow-2xl mt-4 md:mt-0">
            <div v-if="!isEnrolled && user" class="text-center">
-              <p class="text-sm font-bold text-gray-300 mb-4">Ready to start learning?</p>
-              <button @click="handleEnroll" :disabled="isEnrolling" class="w-full bg-white text-gray-900 py-3.5 rounded-xl font-black hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 disabled:opacity-50 shadow-lg">
+              <p class="text-sm font-bold text-gray-300 mb-2 md:mb-4">Ready to start learning?</p>
+              <button @click="handleEnroll" :disabled="isEnrolling" class="w-full bg-white text-gray-900 py-2.5 md:py-3.5 rounded-xl font-black hover:bg-blue-600 hover:text-white transition-all transform hover:-translate-y-1 disabled:opacity-50 shadow-lg text-sm md:text-base">
                 {{ isEnrolling ? 'Processing...' : 'Enroll Now' }}
               </button>
            </div>
-           <div v-else-if="isEnrolled" class="text-left">
-              <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Course Progress</p>
-              <div class="flex justify-between items-end mb-2">
-                 <span class="text-3xl font-black">{{ progressPercentage }}%</span>
-                 <span class="text-xs text-gray-400 font-bold mb-1">Completed</span>
+           <div v-else-if="isEnrolled" class="flex flex-col justify-center">
+              <div class="flex justify-between items-center mb-2 md:mb-3">
+                 <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Progress</span>
+                 <span class="text-base md:text-3xl font-black">{{ progressPercentage }}%</span>
               </div>
-              <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+              <div class="w-full bg-gray-700 h-1.5 md:h-2 rounded-full overflow-hidden">
                  <div class="bg-blue-500 h-full transition-all duration-1000" :style="`width: ${progressPercentage}%`"></div>
               </div>
            </div>
            <div v-else class="text-center">
-              <p class="text-sm font-bold text-gray-300 mb-4">Sign in to track progress.</p>
-              <button @click="$router.push('/login')" class="w-full bg-blue-600 text-white py-3.5 rounded-xl font-black transition-all">Login / Register</button>
+              <p class="text-sm font-bold text-gray-300 mb-2 md:mb-4">Sign in to track progress.</p>
+              <button @click="$router.push('/login')" class="w-full bg-blue-600 text-white py-2.5 md:py-3.5 rounded-xl font-black transition-all text-sm md:text-base">Login / Register</button>
            </div>
         </div>
       </div>
@@ -121,18 +120,18 @@
          <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
             
             <!-- Left Sidebar: Curriculum Navigator (Sticky for easy navigation) -->
-            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden sticky top-24 max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
-               <div class="p-6 border-b border-gray-100 bg-gray-50/50">
-                  <h3 class="font-black text-gray-900 text-lg">Course Syllabus</h3>
-                  <p class="text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
+               <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
+                  <h3 class="font-black text-gray-900 text-base md:text-lg">Course Syllabus</h3>
+                  <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
                </div>
                <div class="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar">
                   
                   <!-- Section Accordion -->
-                  <div v-for="(semNotes, sem) in filteredGroupedNotes" :key="sem" class="border border-gray-100 rounded-2xl overflow-hidden">
-                     <button @click="toggleSection(sem)" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-blue-50 transition-colors font-black text-gray-800 text-left">
+                  <div v-for="(semNotes, sem) in filteredGroupedNotes" :key="sem" class="border border-gray-100 rounded-xl md:rounded-2xl overflow-hidden">
+                     <button @click="toggleSection(sem)" class="w-full flex justify-between items-center p-3 md:p-4 bg-gray-50 hover:bg-blue-50 transition-colors font-black text-gray-800 text-left text-sm md:text-base">
                         <span class="flex items-center">
-                           <span class="w-6 h-6 rounded-md bg-white text-blue-600 flex items-center justify-center text-xs mr-3 shadow-sm border border-gray-200">{{ sem }}</span>
+                           <span class="w-5 h-5 md:w-6 md:h-6 rounded-md bg-white text-blue-600 flex items-center justify-center text-[10px] md:text-xs mr-2 md:mr-3 shadow-sm border border-gray-200">{{ sem }}</span>
                            Section / Class {{ sem }}
                         </span>
                         <svg :class="{'rotate-180': openSections[sem]}" class="w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -436,48 +435,6 @@
       </button>
     </nav>
 
-    <!-- Nova AI Assistant Button -->
-    <button @click="showAiChat = true" v-if="!showAiChat" class="fixed bottom-8 right-8 bg-gray-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 group border border-gray-700 flex items-center gap-3">
-       <span class="text-2xl animate-pulse">✨</span>
-       <span class="font-black text-sm tracking-widest uppercase pr-2 group-hover:block hidden">Ask Nova AI</span>
-    </button>
-
-    <!-- Nova AI Chat Window -->
-    <div v-if="showAiChat" class="fixed bottom-8 right-8 w-80 md:w-96 h-[500px] bg-white/90 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-gray-200 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-300">
-       <div class="bg-gray-900 p-4 flex justify-between items-center text-white">
-          <div class="flex items-center gap-3">
-             <span class="text-2xl">✨</span>
-             <div>
-                <h3 class="font-black text-sm uppercase tracking-widest">Nova AI</h3>
-                <p class="text-[10px] text-blue-400 font-bold">24/7 Teaching Assistant</p>
-             </div>
-          </div>
-          <button @click="showAiChat = false" class="text-gray-400 hover:text-white transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-       </div>
-       
-       <div ref="aiChatBox" class="flex-grow p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4 bg-gray-50/50">
-          <div v-for="(msg, idx) in aiMessages" :key="idx" :class="msg.role === 'user' ? 'self-end bg-blue-600 text-white rounded-tr-sm' : 'self-start bg-white border border-gray-200 text-gray-800 rounded-tl-sm'" class="max-w-[85%] p-3.5 rounded-2xl text-sm shadow-sm leading-relaxed whitespace-pre-wrap">
-             {{ msg.text }}
-          </div>
-          <div v-if="isAiTyping" class="self-start bg-white border border-gray-200 text-gray-500 p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm flex items-center gap-1.5">
-             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-             <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
-          </div>
-       </div>
-
-       <form @submit.prevent="askAi" class="p-3 bg-white border-t border-gray-100">
-          <div class="relative">
-             <input v-model="aiQuery" placeholder="Ask about this lesson..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3.5 pl-4 pr-12 text-sm font-medium outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-inner">
-             <button type="submit" :disabled="!aiQuery.trim() || isAiTyping" class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center disabled:opacity-50 hover:bg-blue-700 transition-colors shadow-md">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-             </button>
-          </div>
-       </form>
-    </div>
-
   </div>
 </template>
 
@@ -537,15 +494,6 @@ const runCode = () => {
    }, 600);
 };
 
-// AI Assistant State
-const showAiChat = ref(false);
-const aiQuery = ref('');
-const isAiTyping = ref(false);
-const aiChatBox = ref(null);
-const aiMessages = ref([
-  { role: 'ai', text: 'Hi there! I am Nova, your AI teaching assistant. Ask me anything about the current lesson!' }
-]);
-
 // SEPARATE LESSONS AND EXAM PAPERS
 const lessons = computed(() => notes.value.filter(n => n.doc_type !== 'paper'));
 const papers = computed(() => notes.value.filter(n => n.doc_type === 'paper'));
@@ -573,76 +521,6 @@ const scrollToBottom = () => {
   });
 };
 
-const scrollAiChat = () => {
-  nextTick(() => {
-    if (aiChatBox.value) aiChatBox.value.scrollTop = aiChatBox.value.scrollHeight;
-  });
-};
-
-// --- NEW REAL AI BACKEND LOGIC ---
-const fetchWithRetry = async (url, options, retries = 5, delay = 1000) => {
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok) throw new Error("API request failed");
-    return response;
-  } catch (err) {
-    if (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return fetchWithRetry(url, options, retries - 1, delay * 2);
-    }
-    throw err;
-  }
-};
-
-const askAi = async () => {
-  if (!aiQuery.value.trim()) return;
-  
-  const userText = aiQuery.value;
-  aiMessages.value.push({ role: 'user', text: userText });
-  aiQuery.value = '';
-  isAiTyping.value = true;
-  scrollAiChat();
-
-  try {
-    const apiKey = ""; // Execution environment injects API key automatically
-    const modelUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-    // Build smart context for Nova AI
-    let systemContext = "You are Nova, an elite AI teaching assistant for high school CS and IP students. Keep answers concise, helpful, and encouraging. Use plain text formatting or simple markdown.";
-    
-    if (selectedTopic.value) {
-        systemContext += ` The student is currently studying: ${selectedTopic.value.subject_name}.`;
-        
-        // Strip HTML from the rich text content to feed to the AI safely without exceeding payload limits
-        if (selectedTopic.value.content) {
-            const plainTextContent = selectedTopic.value.content.replace(/<[^>]+>/g, ' ').substring(0, 1500); 
-            systemContext += ` Here is a snippet of their lesson for context: ${plainTextContent}`;
-        }
-    }
-
-    const payload = {
-        contents: [{ parts: [{ text: userText }] }],
-        systemInstruction: { parts: [{ text: systemContext }] }
-    };
-
-    const response = await fetchWithRetry(modelUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
-
-    const result = await response.json();
-    const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, my neural network is resting. Please try again.";
-
-    aiMessages.value.push({ role: 'ai', text: aiText });
-  } catch (error) {
-    console.error("Nova AI Error:", error);
-    aiMessages.value.push({ role: 'ai', text: "Oops! My connection to the matrix dropped. Please try asking again in a moment." });
-  } finally {
-    isAiTyping.value = false;
-    scrollAiChat();
-  }
-};
 
 const fetchData = async () => {
   try {
