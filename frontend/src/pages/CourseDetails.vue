@@ -18,7 +18,7 @@
       <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"></div>
       <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
 
-      <div class="max-w-7xl mx-auto px-4 md:px-6 pt-20 pb-6 md:py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
+      <div class="w-full mx-auto px-4 md:px-6 pt-20 pb-6 md:py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
         <div>
           <button @click="$router.push('/')" class="hidden md:flex mb-6 items-center text-gray-400 hover:text-white transition-all text-sm font-bold tracking-widest uppercase">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -28,7 +28,7 @@
              <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest backdrop-blur-md">{{ course?.short_name }}</span>
              <span class="text-xs font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
           </div>
-          <h1 class="hidden md:block text-3xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
+          <h1 class="hidden md:block text-2xl md:text-4xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
           <p class="text-sm md:text-base text-gray-400 mt-0 md:mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
         </div>
 
@@ -59,7 +59,7 @@
 
     <!-- Navigation Tabs -->
     <div class="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm backdrop-blur-xl bg-white/90">
-       <div class="max-w-7xl mx-auto px-4 md:px-6 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
+       <div class="w-full mx-auto px-4 md:px-6 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
           <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
              Interactive Curriculum
@@ -88,7 +88,7 @@
        </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
+    <main class="w-full mx-auto px-4 md:px-6 mt-6 md:mt-10">
       
       <!-- RESOURCES / CURRICULUM TAB -->
       <div v-if="activeTab === 'resources'" class="animate-in fade-in duration-500">
@@ -107,7 +107,7 @@
             <!-- Left Sidebar: Curriculum Navigator (Sticky for easy navigation) -->
             <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] flex flex-col flex-shrink-0 z-20">
                <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
-                  <h3 class="font-black text-gray-900 text-base md:text-lg">Course Syllabus</h3>
+                  <h3 class="font-black text-gray-900 text-base">Course Syllabus</h3>
                   <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ lessons.length }} Total Lessons</p>
                </div>
                <div class="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -156,14 +156,14 @@
                
                <div v-if="!selectedTopic" class="m-auto text-center p-20">
                   <div class="text-7xl mb-6 opacity-80">🎓</div>
-                  <h2 class="text-3xl font-black text-gray-800">Select a lesson to begin</h2>
+                  <h2 class="text-2xl font-black text-gray-800">Select a lesson to begin</h2>
                   <p class="text-gray-400 mt-2 font-medium">Choose a topic from the curriculum sidebar.</p>
                </div>
 
                <!-- PRO GATING LOGIC -->
                <div v-else-if="selectedTopic.is_pro && !user?.is_pro && user?.role !== 'admin'" class="m-auto text-center p-12 bg-gray-50 rounded-2xl border border-gray-200 m-8 shadow-inner">
                   <div class="text-6xl mb-6">🔒</div>
-                  <h2 class="text-3xl font-black text-gray-900 mb-2">Premium Lesson</h2>
+                  <h2 class="text-2xl font-black text-gray-900 mb-2">Premium Lesson</h2>
                   <p class="text-gray-500 mb-8 max-w-md mx-auto">This content is reserved for Pro Elite members. Upgrade to access full rich-text lessons, ad-free learning, and downloads.</p>
                   <button @click="$router.push('/pricing')" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-black shadow-xl hover:bg-amber-500 transition-colors transform hover:-translate-y-1">
                      Unlock Pro Access
@@ -178,7 +178,7 @@
                            <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
                            <span v-if="selectedTopic.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
                         </div>
-                        <h1 class="text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
+                        <h1 class="text-2xl lg:text-3xl xl:text-4xl font-black text-gray-900 tracking-tight leading-tight">{{ selectedTopic.subject_name }}</h1>
                      </div>
                      
                      <div class="flex items-center">
@@ -345,7 +345,7 @@
       </div>
 
       <!-- NEW: PYTHON CODE LAB TAB -->
-      <div v-if="activeTab === 'codelab'" class="animate-in fade-in duration-500 max-w-6xl mx-auto">
+      <div v-if="activeTab === 'codelab'" class="animate-in fade-in duration-500 w-full mx-auto">
          <div class="bg-gray-950 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden flex flex-col h-[75vh]">
             <!-- Code Lab Header -->
             <div class="p-6 border-b border-gray-800 bg-gray-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -389,7 +389,7 @@
       </div>
 
       <!-- COMMUNITY / DISCUSSION TAB -->
-      <div v-if="activeTab === 'discussion'" class="max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500 flex flex-col gap-6">
+      <div v-if="activeTab === 'discussion'" class="w-full mx-auto animate-in slide-in-from-bottom-4 duration-500 flex flex-col gap-6">
          <!-- SUPPORT SECTION -->
          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
