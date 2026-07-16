@@ -1,6 +1,16 @@
 <template>
   <div class="min-h-screen bg-gray-50/50 pb-24 md:pb-12 font-sans relative">
     
+    <!-- Mobile Fixed Header (App Style) -->
+    <header class="md:hidden fixed top-0 left-0 right-0 h-14 bg-gray-900/95 backdrop-blur-md z-50 flex items-center justify-between px-4 border-b border-gray-800 shadow-lg">
+      <div class="flex items-center gap-3">
+         <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">{{ course?.short_name || 'Course' }}</span>
+         <span class="text-[10px] font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-1.5 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
+      </div>
+      <button @click="$router.push('/')" class="text-gray-400 hover:text-white transition-colors p-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      </button>
+    </header>
 
     <!-- Premium Course Hero -->
     <div class="bg-gray-900 text-white relative overflow-hidden">
@@ -8,18 +18,18 @@
       <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"></div>
       <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
 
-      <div class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 pt-20 pb-6 md:py-12 relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
         <div>
-          <button @click="$router.push('/')" class="mb-6 flex items-center text-gray-400 hover:text-white transition-all text-sm font-bold tracking-widest uppercase">
+          <button @click="$router.push('/')" class="hidden md:flex mb-6 items-center text-gray-400 hover:text-white transition-all text-sm font-bold tracking-widest uppercase">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Back to Catalog
           </button>
-          <div class="flex items-center gap-3 mb-3 flex-wrap">
+          <div class="hidden md:flex items-center gap-3 mb-3 flex-wrap">
              <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest backdrop-blur-md">{{ course?.short_name }}</span>
              <span class="text-xs font-bold text-green-400 flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span> Active Community</span>
           </div>
-          <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
-          <p class="text-sm md:text-base text-gray-400 mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
+          <h1 class="hidden md:block text-3xl md:text-5xl font-black tracking-tight leading-tight">{{ course?.course_name }}</h1>
+          <p class="text-sm md:text-base text-gray-400 mt-0 md:mt-2 font-medium max-w-2xl">Master the complete curriculum with rich-text lessons, downloadable assets, video lectures, and community discussions.</p>
         </div>
 
         <!-- Enrollment Card -->
