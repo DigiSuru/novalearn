@@ -416,6 +416,25 @@
             </div>
          </div>
 
+         <!-- INSTRUCTOR PROFILE -->
+         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col md:flex-row items-center md:items-stretch">
+            <div class="w-full md:w-1/3 bg-slate-900 flex justify-center items-center p-8">
+               <img src="https://skmeghwal.in/SURESH.jpeg" alt="Suresh Kumar Meghwal" class="w-48 h-48 object-cover rounded-2xl border-4 border-slate-800 shadow-xl" />
+            </div>
+            <div class="w-full md:w-2/3 p-6 sm:p-8 flex flex-col justify-center">
+               <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-widest w-max mb-4">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span> Course Instructor
+               </div>
+               <h3 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-tight mb-2">Suresh Kumar Meghwal</h3>
+               <p class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-widest">CS Educator, Cybersecurity Specialist & Affiliate Marketer</p>
+               <p class="text-gray-600 text-sm leading-relaxed mb-6">Bridging institutional instruction, web application vulnerability testing, and performance-based marketing. As the mind behind the CSwithSuru brand, I train upcoming technologists while deploying robust affiliate pipelines, lead generation systems, and cloud architectures.</p>
+               <a href="https://skmeghwal.in" target="_blank" class="inline-flex items-center text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors group">
+                  View Full Portfolio
+                  <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+               </a>
+            </div>
+         </div>
+
       </div>
 
       <!-- QUIZZES TAB -->
