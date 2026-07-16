@@ -172,7 +172,7 @@
 
                <div v-else class="flex flex-col h-full">
                   <!-- Lesson Header -->
-                  <div class="p-4 sm:p-8 lg:p-10 xl:p-12 border-b border-gray-100 flex justify-between items-start bg-white">
+                  <div class="p-4 md:p-6 border-b border-gray-100 flex justify-between items-start bg-white">
                      <div>
                         <div class="flex items-center gap-3 mb-4">
                            <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest">Section {{ selectedTopic.semester }}</span>
@@ -192,10 +192,10 @@
                   </div>
 
                   <!-- Content Area (Removed inner scrollbar to let the entire page scroll) -->
-                  <div class="flex-grow p-6 sm:p-10 lg:p-12 xl:p-16 bg-gray-50/30">
+                  <div class="flex-grow p-4 md:p-6 bg-gray-50/30">
                      
                      <!-- CRITICAL FIX: Ensure rich text renders flawlessly with optimized reading width -->
-                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-4 sm:p-8 lg:p-12 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
+                     <div v-if="selectedTopic.content" class="rich-text-container bg-white p-4 md:p-6 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm mx-auto" v-html="selectedTopic.content"></div>
                      
                      <div v-if="selectedTopic.file_url && selectedTopic.file_url.endsWith('.mp4')" class="mt-8 rounded-2xl overflow-hidden bg-black shadow-2xl border border-gray-800 relative group">
                         <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -735,8 +735,8 @@ onMounted(() => {
 
 /* ERROR-FREE RAW CSS FOR RICH TEXT - OPTIMIZED FOR READABILITY */
 .rich-text-container { color: #1f2937; line-height: 1.8; max-width: 850px; margin-left: auto; margin-right: auto; font-size: clamp(1rem, 2.5vw, 1.125rem); word-break: break-word; }
-.rich-text-container :deep(h1) { font-size: clamp(1.75rem, 5vw, 2.5rem); font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 2rem; letter-spacing: -0.025em; line-height: 1.2; }
-.rich-text-container :deep(h2) { font-size: clamp(1.5rem, 4vw, 1.875rem); font-weight: 800; color: #111827; margin-bottom: 1.25rem; margin-top: 2rem; line-height: 1.3; }
+.rich-text-container :deep(h1) { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 900; color: #111827; margin-bottom: 1.25rem; margin-top: 1.5rem; letter-spacing: -0.025em; line-height: 1.2; }
+.rich-text-container :deep(h2) { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 800; color: #111827; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.3; }
 .rich-text-container :deep(h3) { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 700; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.4; }
 .rich-text-container :deep(p) { margin-bottom: 1.5rem; letter-spacing: -0.01em; }
 .rich-text-container :deep(ul) { list-style-type: disc; list-style-position: outside; margin-bottom: 1.5rem; padding-left: clamp(1rem, 3vw, 1.5rem); }
