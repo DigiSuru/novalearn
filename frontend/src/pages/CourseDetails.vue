@@ -258,28 +258,91 @@
             <h3 class="text-2xl font-black text-gray-800">No Exam Papers Yet</h3>
             <p class="text-gray-400 mt-2 font-medium">Previous year board papers and sample exams will appear here.</p>
          </div>
-         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            <div v-for="paper in papers" :key="paper.id" class="bg-white p-5 md:p-8 rounded-3xl md:rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between group hover:border-indigo-500 hover:shadow-xl transition-all relative overflow-hidden">
-               <div class="absolute top-0 right-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-3xl md:rounded-bl-[4rem] -z-10 group-hover:scale-150 transition-transform"></div>
-               <div>
-                  <div class="flex justify-between items-start mb-4 md:mb-6">
-                     <span class="bg-indigo-50 text-indigo-600 px-2.5 py-1 md:px-3 md:py-1 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-indigo-100">Board Exam / Mock</span>
-                     <span v-if="paper.is_pro" class="bg-amber-100 text-amber-700 text-[9px] md:text-[10px] font-black px-2.5 py-1 md:px-3 md:py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-2.5 h-2.5 md:w-3 md:h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
-                  </div>
-                  <h4 class="text-lg md:text-xl font-black text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight mb-2 md:mb-3">{{ paper.subject_name }}</h4>
-                  <p class="text-xs md:text-sm text-gray-500 font-medium mb-3 md:mb-4">Year / Reference: {{ paper.semester }}</p>
-                  
-                  <!-- CRITICAL FIX: Ensure rich text instructions entered for Exam Papers are displayed to students -->
-                  <div v-if="paper.content" class="bg-gray-50/50 border border-gray-100 p-4 md:p-5 rounded-2xl mb-4 md:mb-6 text-xs md:text-sm text-gray-700 rich-text-container max-h-40 md:max-h-48 overflow-y-auto custom-scrollbar shadow-inner" v-html="paper.content"></div>
+         <div v-else class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <!-- Left Sidebar: Papers Navigator -->
+            <div class="w-full lg:w-1/3 xl:w-1/4 bg-white rounded-2xl md:rounded-2xl border border-gray-200 shadow-sm overflow-hidden md:sticky md:top-40 md:max-h-[calc(100vh-11rem)] flex flex-col flex-shrink-0 z-20">
+               <div class="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
+                  <h3 class="font-black text-gray-900 text-base md:text-lg">Exam Papers</h3>
+                  <p class="text-[10px] md:text-xs text-gray-500 font-bold mt-1">{{ papers.length }} Total Papers</p>
                </div>
+               <div class="flex-grow overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                  <button 
+                     v-for="(paper, index) in papers" 
+                     :key="paper.id" 
+                     @click="selectPaper(paper)"
+                     :class="selectedPaper?.id === paper.id ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 border border-gray-100'"
+                     class="w-full text-left p-3 rounded-xl transition-all flex items-center group relative"
+                  >
+                     <span v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="absolute right-3 text-amber-400"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg></span>
+                     <div class="mr-3 flex-shrink-0 text-center w-5">
+                        <svg v-if="selectedPaper?.id === paper.id" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span v-else class="text-xs font-bold opacity-50">{{ index + 1 }}</span>
+                     </div>
+                     <div class="flex flex-col pr-6">
+                        <span class="text-sm font-bold truncate leading-tight">{{ paper.subject_name }}</span>
+                        <span class="text-[10px] uppercase font-bold opacity-70 tracking-widest mt-0.5">{{ paper.semester }}</span>
+                     </div>
+                  </button>
+               </div>
+            </div>
+
+            <!-- Right Main Area: Paper Viewer -->
+            <div class="w-full lg:w-2/3 xl:w-3/4 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col relative overflow-hidden">
                
-               <div v-if="paper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="mt-4 md:mt-8">
-                   <button @click="$router.push('/pricing')" class="w-full bg-gray-900 text-white py-3 md:py-4 rounded-xl md:rounded-2xl font-black shadow-lg hover:bg-amber-500 transition-all text-xs md:text-sm uppercase tracking-widest">Unlock Pro to Access</button>
+               <div v-if="!selectedPaper" class="m-auto text-center p-20">
+                  <div class="text-7xl mb-6 opacity-80">📄</div>
+                  <h2 class="text-3xl font-black text-gray-800">Select a paper to view</h2>
+                  <p class="text-gray-400 mt-2 font-medium">Choose an exam paper from the sidebar.</p>
                </div>
-               <div v-else class="mt-4 md:mt-8 flex flex-col sm:flex-row gap-2 md:gap-3">
-                   <a v-if="paper.file_url" :href="paper.file_url" target="_blank" @click="trackDownload(paper.id)" class="flex-1 bg-indigo-600 text-white py-3 md:py-4 rounded-xl md:rounded-2xl font-black shadow-lg hover:bg-indigo-500 transition-all text-center flex items-center justify-center text-xs md:text-sm uppercase tracking-widest">Download Paper</a>
-                   <button v-if="user?.role === 'admin'" @click="handleDelete(paper.id)" class="w-full sm:w-auto px-4 py-3 md:py-0 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl md:rounded-2xl transition-colors shadow-sm flex justify-center items-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+
+               <!-- PRO GATING LOGIC -->
+               <div v-else-if="selectedPaper.is_pro && !user?.is_pro && user?.role !== 'admin'" class="m-auto text-center p-12 bg-gray-50 rounded-2xl border border-gray-200 m-8 shadow-inner">
+                  <div class="text-6xl mb-6">🔒</div>
+                  <h2 class="text-3xl font-black text-gray-900 mb-2">Premium Paper</h2>
+                  <p class="text-gray-500 mb-8 max-w-md mx-auto">This exam paper is reserved for Pro members. Upgrade to access full papers and solutions.</p>
+                  <button @click="$router.push('/pricing')" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-black shadow-xl hover:bg-amber-500 transition-colors transform hover:-translate-y-1">
+                     Unlock Pro Access
+                  </button>
                </div>
+
+               <div v-else class="flex flex-col h-full">
+                  <!-- Paper Header -->
+                  <div class="p-4 sm:p-8 lg:p-10 border-b border-gray-100 flex justify-between items-start bg-white">
+                     <div>
+                        <div class="flex items-center gap-3 mb-4">
+                           <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">Board Exam / Mock</span>
+                           <span v-if="selectedPaper.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                        </div>
+                        <h1 class="text-2xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2">{{ selectedPaper.subject_name }}</h1>
+                        <p class="text-sm text-gray-500 font-medium">Year / Reference: {{ selectedPaper.semester }}</p>
+                     </div>
+                     <div class="flex items-center gap-2">
+                        <button v-if="user?.role === 'admin'" @click="handleDelete(selectedPaper.id)" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-colors shadow-sm" title="Delete Paper">
+                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                     </div>
+                  </div>
+
+                  <!-- Content Area -->
+                  <div class="flex-grow p-6 sm:p-10 lg:p-12 bg-gray-50/30">
+                     <div v-if="selectedPaper.content" class="bg-white border border-gray-100 p-6 sm:p-10 rounded-2xl mb-8 text-sm md:text-base text-gray-700 rich-text-container shadow-sm" v-html="selectedPaper.content"></div>
+                     
+                     <div v-if="selectedPaper.file_url" class="bg-white border border-indigo-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
+                        <div class="flex items-center gap-5">
+                           <div class="w-14 h-14 bg-indigo-50 rounded-2xl text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">📥</div>
+                           <div>
+                              <p class="font-black text-gray-900">Download Paper</p>
+                              <p class="text-xs text-gray-500 font-bold mt-1 uppercase tracking-widest">PDF format available</p>
+                           </div>
+                        </div>
+                        <a :href="selectedPaper.file_url" target="_blank" @click="trackDownload(selectedPaper.id)" class="w-full sm:w-auto text-center bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-xl font-black transition-colors shadow-lg shadow-indigo-600/20 uppercase tracking-widest text-sm">
+                           Download Now
+                        </a>
+                     </div>
+                  </div>
+               </div>
+
             </div>
          </div>
       </div>
@@ -469,6 +532,7 @@ const isEnrolling = ref(false);
 const newMessage = ref('');
 
 const selectedTopic = ref(null);
+const selectedPaper = ref(null);
 const openSections = ref({});
 const completedLessons = ref([]); 
 const isCompleted = computed(() => completedLessons.value.includes(selectedTopic.value?.id));
@@ -554,6 +618,14 @@ const fetchData = async () => {
       if(lessons.value.length > 0) {
          selectedTopic.value = lessons.value[0];
       }
+      if(papers.value.length > 0) {
+         selectedPaper.value = papers.value[0];
+      }
+    } else {
+      // Even if not logged in, select first paper for preview
+      if(papers.value.length > 0) {
+         selectedPaper.value = papers.value[0];
+      }
     }
   } catch (err) { console.error(err); } finally { loading.value = false; }
 };
@@ -561,6 +633,7 @@ const fetchData = async () => {
 const toggleSection = (sem) => openSections.value[sem] = !openSections.value[sem];
 
 const selectTopic = (topic) => { selectedTopic.value = topic; };
+const selectPaper = (paper) => { selectedPaper.value = paper; };
 
 const markComplete = async () => {
    if(!selectedTopic.value || !user.value) return;
@@ -624,6 +697,7 @@ const handleDelete = async (noteId) => {
     await api.deleteNote(noteId);
     notes.value = notes.value.filter(n => n.id !== noteId);
     if(selectedTopic.value?.id === noteId) selectedTopic.value = null;
+    if(selectedPaper.value?.id === noteId) selectedPaper.value = null;
     alert("Material deleted successfully.");
   } catch (err) {
     alert("Failed to delete. You might not have permission.");
