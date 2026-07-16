@@ -295,35 +295,35 @@
 
                <div v-else class="flex flex-col h-full">
                   <!-- Paper Header -->
-                  <div class="p-4 sm:p-8 lg:p-10 border-b border-gray-100 flex justify-between items-start bg-white">
+                  <div class="p-4 md:p-6 border-b border-gray-100 flex justify-between items-start bg-white">
                      <div>
-                        <div class="flex items-center gap-3 mb-4">
-                           <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">Board Exam / Mock</span>
-                           <span v-if="selectedPaper.is_pro" class="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
+                        <div class="flex items-center gap-2 mb-2">
+                           <span class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest">Board Exam / Mock</span>
+                           <span v-if="selectedPaper.is_pro" class="bg-amber-100 text-amber-700 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest flex items-center shadow-sm"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg> Pro</span>
                         </div>
-                        <h1 class="text-2xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2">{{ selectedPaper.subject_name }}</h1>
-                        <p class="text-sm text-gray-500 font-medium">Year / Reference: {{ selectedPaper.semester }}</p>
+                        <h1 class="text-lg md:text-2xl font-black text-gray-900 tracking-tight leading-tight mb-1">{{ selectedPaper.subject_name }}</h1>
+                        <p class="text-xs md:text-sm text-gray-500 font-medium">Year / Reference: {{ selectedPaper.semester }}</p>
                      </div>
                      <div class="flex items-center gap-2">
-                        <button v-if="user?.role === 'admin'" @click="handleDelete(selectedPaper.id)" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2.5 rounded-xl transition-colors shadow-sm" title="Delete Paper">
-                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <button v-if="user?.role === 'admin'" @click="handleDelete(selectedPaper.id)" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors shadow-sm" title="Delete Paper">
+                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                      </div>
                   </div>
 
                   <!-- Content Area -->
-                  <div class="flex-grow p-6 sm:p-10 lg:p-12 bg-gray-50/30">
-                     <div v-if="selectedPaper.content" class="bg-white border border-gray-100 p-6 sm:p-10 rounded-2xl mb-8 text-sm md:text-base text-gray-700 rich-text-container shadow-sm" v-html="selectedPaper.content"></div>
+                  <div class="flex-grow p-4 md:p-6 lg:p-8 bg-gray-50/30">
+                     <div v-if="selectedPaper.content" class="bg-white border border-gray-100 p-4 md:p-6 rounded-xl mb-6 text-xs md:text-sm text-gray-700 rich-text-container shadow-sm overflow-x-auto" v-html="selectedPaper.content"></div>
                      
-                     <div v-if="selectedPaper.file_url" class="bg-white border border-indigo-100 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
-                        <div class="flex items-center gap-5">
-                           <div class="w-14 h-14 bg-indigo-50 rounded-2xl text-indigo-600 flex items-center justify-center text-3xl shadow-inner border border-indigo-100">📥</div>
+                     <div v-if="selectedPaper.file_url" class="bg-white border border-indigo-100 p-4 md:p-6 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
+                        <div class="flex items-center gap-4">
+                           <div class="w-10 h-10 bg-indigo-50 rounded-xl text-indigo-600 flex items-center justify-center text-xl shadow-inner border border-indigo-100">📥</div>
                            <div>
-                              <p class="font-black text-gray-900">Download Paper</p>
-                              <p class="text-xs text-gray-500 font-bold mt-1 uppercase tracking-widest">PDF format available</p>
+                              <p class="text-sm font-black text-gray-900">Download Paper</p>
+                              <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">PDF format available</p>
                            </div>
                         </div>
-                        <a :href="selectedPaper.file_url" target="_blank" @click="trackDownload(selectedPaper.id)" class="w-full sm:w-auto text-center bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-xl font-black transition-colors shadow-lg shadow-indigo-600/20 uppercase tracking-widest text-sm">
+                        <a :href="selectedPaper.file_url" target="_blank" @click="trackDownload(selectedPaper.id)" class="w-full sm:w-auto text-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-black transition-colors shadow-md shadow-indigo-600/20 uppercase tracking-widest text-xs md:text-sm">
                            Download Now
                         </a>
                      </div>
