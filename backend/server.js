@@ -16,6 +16,7 @@ const isAdmin = require('./middleware/adminMiddleware');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock');
 
 const app = express();
+app.set('trust proxy', 1); // CRITICAL: Fixes HTTPS protocol resolution behind Render/load balancers
 
 app.use(cors());
 app.use(express.json());
@@ -27,13 +28,14 @@ app.use((req, res, next) => {
 });
 
 // Ensure uploads directory exists
-if (!fs.existsSync('./uploads')) {
-    fs.mkdirSync('./uploads');
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
 }
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, './uploads/'),
+    destination: (req, file, cb) => cb(null, uploadsDir),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage: storage });
