@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50/50 font-sans pb-20 relative">
+  <div class="min-h-screen bg-gray-50/50 pb-24 md:pb-12 font-sans relative">
     
     <!-- Premium Course Hero -->
     <div class="bg-gray-900 text-white relative overflow-hidden">
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm backdrop-blur-xl bg-white/90">
+    <div class="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm backdrop-blur-xl bg-white/90">
        <div class="max-w-7xl mx-auto px-4 md:px-6 flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
           <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent hover:text-gray-900'" class="py-5 text-sm font-black uppercase tracking-widest border-b-4 transition-colors whitespace-nowrap flex items-center">
              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -411,6 +411,30 @@
       </div>
 
     </main>
+
+    <!-- Mobile Fixed Bottom Navigation (Icons Only) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 z-50 flex justify-around items-center h-16 px-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe">
+      <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-blue-600' : 'text-gray-400'" class="flex flex-col items-center justify-center w-full h-full transition-colors relative">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+         <div v-if="activeTab === 'resources'" class="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+      </button>
+      <button @click="activeTab = 'papers'" :class="activeTab === 'papers' ? 'text-blue-600' : 'text-gray-400'" class="flex flex-col items-center justify-center w-full h-full transition-colors relative">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+         <div v-if="activeTab === 'papers'" class="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+      </button>
+      <button @click="activeTab = 'codelab'" :class="activeTab === 'codelab' ? 'text-blue-600' : 'text-gray-400'" class="flex flex-col items-center justify-center w-full h-full transition-colors relative">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+         <div v-if="activeTab === 'codelab'" class="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+      </button>
+      <button @click="activeTab = 'discussion'" :class="activeTab === 'discussion' ? 'text-blue-600' : 'text-gray-400'" class="flex flex-col items-center justify-center w-full h-full transition-colors relative">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+         <div v-if="activeTab === 'discussion'" class="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+      </button>
+      <button @click="activeTab = 'quizzes'" :class="activeTab === 'quizzes' ? 'text-blue-600' : 'text-gray-400'" class="flex flex-col items-center justify-center w-full h-full transition-colors relative">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+         <div v-if="activeTab === 'quizzes'" class="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+      </button>
+    </nav>
 
     <!-- Nova AI Assistant Button -->
     <button @click="showAiChat = true" v-if="!showAiChat" class="fixed bottom-8 right-8 bg-gray-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 group border border-gray-700 flex items-center gap-3">
