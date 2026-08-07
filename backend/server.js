@@ -54,7 +54,7 @@ app.get('/api/courses', async (req, res) => {
     }
 });
 
-app.get('/api/courses/:id', async (req, res) => {
+app.get('/api/courses/:id', verifyToken, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM courses WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ success: false, message: "Not found" });
@@ -65,7 +65,7 @@ app.get('/api/courses/:id', async (req, res) => {
     }
 });
 
-app.get('/api/courses/:id/notes', async (req, res) => {
+app.get('/api/courses/:id/notes', verifyToken, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM notes WHERE course_id = ? ORDER BY semester ASC", [req.params.id]);
         res.json({ success: true, data: rows || [] });
@@ -75,7 +75,7 @@ app.get('/api/courses/:id/notes', async (req, res) => {
     }
 });
 
-app.get('/api/courses/:id/quizzes', async (req, res) => {
+app.get('/api/courses/:id/quizzes', verifyToken, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM quizzes WHERE course_id = ? ORDER BY semester ASC", [req.params.id]);
         res.json({ success: true, data: rows || [] });
@@ -326,7 +326,7 @@ app.get('/api/leaderboard', async (req, res) => {
 // 4. COMMUNITY & ASSESSMENTS
 // ==========================================
 
-app.get('/api/courses/:id/discussions', async (req, res) => {
+app.get('/api/courses/:id/discussions', verifyToken, async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT discussions.*, users.name, users.role 

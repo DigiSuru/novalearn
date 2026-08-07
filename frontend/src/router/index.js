@@ -12,7 +12,12 @@ import Quiz from '../pages/Quiz.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
-    { path: '/course/:id', name: 'CourseDetails', component: CourseDetails },
+    { 
+        path: '/course/:id', 
+        name: 'CourseDetails', 
+        component: CourseDetails, 
+        meta: { requiresAuth: true } 
+    },
     { path: '/career', name: 'Career', component: Career },
     { path: '/pricing', name: 'Pricing', component: Pricing },
     { 
