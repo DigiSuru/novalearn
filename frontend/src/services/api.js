@@ -62,6 +62,7 @@ export default {
     getAdminSystemStats: () => apiClient.get('/admin/system-stats'),
     getAdminUsers: () => apiClient.get('/admin/users'),
     updateUserRole: (id, role) => apiClient.put(`/admin/users/${id}/role`, { role }),
+    approveUser: (id) => apiClient.put(`/admin/users/${id}/approve`),
     
     getUserNotes: () => apiClient.get('/user/notes'),
     addCourse: (data) => apiClient.post('/courses', data),

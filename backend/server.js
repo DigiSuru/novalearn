@@ -133,7 +133,7 @@ app.post('/api/auth/register-admin', async (req, res) => {
         if (exists.length > 0) return res.status(400).json({ success: false, message: "Email already registered." });
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')", [name, email, hashedPassword]);
+        await db.query("INSERT INTO users (name, email, password, role, is_approved) VALUES (?, ?, ?, 'admin', true)", [name, email, hashedPassword]);
         res.json({ success: true, message: "Admin Vault created successfully!" });
     } catch (error) { 
         console.error(`❌ Error in POST /register-admin:`, error.message);
@@ -151,14 +151,14 @@ app.post('/api/auth/login', async (req, res) => {
         if (!match) return res.status(401).json({ success: false, message: "Invalid credentials." });
         
         const user = users[0];
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user.id, role: user.role, is_approved: user.is_approved }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.json({ 
             success: true, 
             token, 
             user: { 
                 id: user.id, name: user.name, email: user.email, role: user.role, 
-                is_pro: user.is_pro, profile_photo_url: user.profile_photo_url, 
+                is_pro: user.is_pro, profile_photo_url: user.profile_photo_url, is_approved: user.is_approved,
                 bio: user.bio, phone: user.phone
             } 
         });
@@ -523,7 +523,7 @@ app.get('/api/admin/system-stats', verifyToken, isAdmin, async (req, res) => {
 
 app.get('/api/admin/users', verifyToken, isAdmin, async (req, res) => {
     try {
-        const [users] = await db.query("SELECT id, name, email, role, is_pro, created_at FROM users ORDER BY created_at DESC");
+        const [users] = await db.query("SELECT id, name, email, role, is_pro, is_approved, created_at FROM users ORDER BY created_at DESC");
         res.json({ success: true, data: users || [] });
     } catch (error) { 
         console.error(`❌ Error in GET /admin/users:`, error.message);
@@ -537,6 +537,16 @@ app.put('/api/admin/users/:id/role', verifyToken, isAdmin, async (req, res) => {
         res.json({ success: true });
     } catch (error) { 
         console.error(`❌ Error in PUT /admin/users:`, error.message);
+        res.status(500).json({ success: false, message: error.message }); 
+    }
+});
+
+app.put('/api/admin/users/:id/approve', verifyToken, isAdmin, async (req, res) => {
+    try {
+        await db.query("UPDATE users SET is_approved = true WHERE id = ?", [req.params.id]);
+        res.json({ success: true });
+    } catch (error) { 
+        console.error(`❌ Error in PUT /admin/users/:id/approve:`, error.message);
         res.status(500).json({ success: false, message: error.message }); 
     }
 });

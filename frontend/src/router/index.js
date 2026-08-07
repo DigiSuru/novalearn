@@ -9,6 +9,7 @@ import Career from '../pages/Career.vue';
 import Profile from '../pages/Profile.vue';
 import Pricing from '../pages/Pricing.vue';
 import Quiz from '../pages/Quiz.vue';
+import PendingApproval from '../pages/PendingApproval.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -61,6 +62,11 @@ const routes = [
         name: 'EditContent', 
         component: Upload,
         meta: { requiresAdmin: true } 
+    },
+    {
+        path: '/pending',
+        name: 'PendingApproval',
+        component: PendingApproval
     }
 ];
 
@@ -74,6 +80,14 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
     const user = userStr ? JSON.parse(userStr) : null;
     const isAuthenticated = user && token;
+
+    if (isAuthenticated && !user.is_approved && user.role !== 'admin' && to.path !== '/pending') {
+        return next('/pending');
+    }
+
+    if (isAuthenticated && user.is_approved && to.path === '/pending') {
+        return next('/profile');
+    }
 
     if (to.meta.requiresAdmin) {
         if (isAuthenticated && user.role === 'admin') {

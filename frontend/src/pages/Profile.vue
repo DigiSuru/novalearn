@@ -450,7 +450,8 @@
                                <span v-if="u.is_pro" class="text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded border border-amber-100">Pro Active</span>
                                <span v-else class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Basic</span>
                             </td>
-                            <td class="p-5 text-right">
+                            <td class="p-5 text-right flex items-center justify-end">
+                               <button v-if="!u.is_approved" @click="handleApproveUser(u.id)" class="text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-200 rounded-lg px-3 py-2 mr-2 hover:bg-green-600 hover:text-white transition-colors">Approve</button>
                                <select 
                                   v-model="u.role" 
                                   @change="handleRoleUpdate(u.id, u.role)"
@@ -768,6 +769,15 @@ const handleRoleUpdate = async (id, newRole) => {
       } catch(e) { alert("Failed to update role."); loadAdminUsers(); }
    } else {
       loadAdminUsers();
+   }
+};
+
+const handleApproveUser = async (id) => {
+   if(confirm("Approve this user for platform access?")) {
+      try {
+         await api.approveUser(id);
+         loadAdminUsers();
+      } catch(e) { alert("Failed to approve user."); }
    }
 };
 
