@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-    <div class="flex-grow flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full">
+    <div class="flex-grow flex flex-col lg:flex-row w-full">
         
         <!-- Left: Upload Settings Matrix -->
         <div class="w-full lg:w-1/3 bg-white border-r border-gray-200 shadow-sm z-10 flex flex-col h-[800px]">
