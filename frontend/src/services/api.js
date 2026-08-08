@@ -61,6 +61,9 @@ export default {
     
     getAdminSystemStats: () => apiClient.get('/admin/system-stats'),
     getAdminUsers: () => apiClient.get('/admin/users'),
+    createUser: (data) => apiClient.post('/admin/users', data),
+    updateUser: (id, data) => apiClient.put(`/admin/users/${id}`, data),
+    deleteUser: (id) => apiClient.delete(`/admin/users/${id}`),
     updateUserRole: (id, role) => apiClient.put(`/admin/users/${id}/role`, { role }),
     approveUser: (id) => apiClient.put(`/admin/users/${id}/approve`),
     

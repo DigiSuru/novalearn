@@ -429,7 +429,12 @@
              <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm">
                 <div class="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
                    <h3 class="font-black text-gray-900">User Identity Management</h3>
-                   <span class="text-xs font-black text-blue-600 bg-white px-3 py-1 rounded-lg border border-blue-100">{{ adminUsers.length }} Total Users</span>
+                   <div class="flex items-center gap-4">
+                      <span class="text-xs font-black text-blue-600 bg-white px-3 py-1 rounded-lg border border-blue-100">{{ adminUsers.length }} Total Users</span>
+                      <button @click="openUserModal()" class="text-xs font-black text-white bg-blue-600 px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors flex items-center gap-2">
+                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> Add User
+                      </button>
+                   </div>
                 </div>
                 <div class="overflow-x-auto">
                    <table class="w-full text-left">
@@ -438,7 +443,7 @@
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student</th>
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pro Status</th>
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Approval Status</th>
-                            <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">System Role</th>
+                            <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                          </tr>
                       </thead>
                       <tbody class="divide-y divide-gray-50">
@@ -457,16 +462,8 @@
                             </td>
                             <td class="p-5 text-right flex items-center justify-end">
                                <button v-if="!u.is_approved" @click="handleApproveUser(u.id)" class="text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-200 rounded-lg px-3 py-2 mr-2 hover:bg-green-600 hover:text-white transition-colors shadow-sm">Approve</button>
-                               <select 
-                                  v-model="u.role" 
-                                  @change="handleRoleUpdate(u.id, u.role)"
-                                  :disabled="u.id === user.id"
-                                  class="text-[10px] font-black uppercase tracking-widest bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-blue-500 cursor-pointer disabled:opacity-50"
-                                  :class="u.role === 'admin' ? 'text-red-600' : 'text-blue-600'"
-                               >
-                                  <option value="student">Student</option>
-                                  <option value="admin">Administrator</option>
-                               </select>
+                               <button @click="openUserModal(u)" class="text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-200 rounded-lg px-3 py-2 mr-2 hover:bg-blue-600 hover:text-white transition-colors shadow-sm">Edit</button>
+                               <button v-if="u.id !== user.id" @click="handleDeleteUser(u.id)" class="text-[10px] font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-200 rounded-lg px-3 py-2 hover:bg-red-600 hover:text-white transition-colors shadow-sm">Delete</button>
                             </td>
                          </tr>
                       </tbody>
@@ -478,6 +475,55 @@
         </div>
       </div>
     </main>
+
+    <!-- USER FORM MODAL -->
+    <div v-if="showUserModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      <div class="bg-white rounded-[2rem] p-8 w-full max-w-lg shadow-2xl border border-white/20 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <h3 class="text-2xl font-black text-gray-900 mb-6">{{ isEditingUser ? 'Edit User' : 'Create User' }}</h3>
+        
+        <form @submit.prevent="handleUserSubmit" class="space-y-4">
+          <div>
+            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Name</label>
+            <input v-model="userForm.name" type="text" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Email</label>
+            <input v-model="userForm.email" type="email" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium">
+          </div>
+          <div v-if="!isEditingUser">
+            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Password</label>
+            <input v-model="userForm.password" type="password" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium">
+          </div>
+          <div class="flex gap-4">
+            <div class="flex-1">
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Role</label>
+              <select v-model="userForm.role" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium cursor-pointer">
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Pro Status</label>
+              <select v-model="userForm.is_pro" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium cursor-pointer">
+                <option :value="false">Basic</option>
+                <option :value="true">Pro Active</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Approval Status</label>
+            <select v-model="userForm.is_approved" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors font-medium cursor-pointer">
+              <option :value="false">Pending</option>
+              <option :value="true">Approved</option>
+            </select>
+          </div>
+          <div class="flex gap-4 pt-4">
+            <button type="button" @click="showUserModal = false" class="flex-1 px-4 py-3 text-sm font-black text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all uppercase tracking-widest">Cancel</button>
+            <button type="submit" class="flex-1 px-4 py-3 text-sm font-black text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-lg uppercase tracking-widest">Save User</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- ELITE SETTINGS MODAL -->
     <div v-if="showEditModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
@@ -767,16 +813,6 @@ const loadAdminUsers = async () => {
    } catch(e) { console.error(e); }
 };
 
-const handleRoleUpdate = async (id, newRole) => {
-   if(confirm(`Change this user's role to ${newRole.toUpperCase()}?`)) {
-      try {
-         await api.updateUserRole(id, newRole);
-      } catch(e) { alert("Failed to update role."); loadAdminUsers(); }
-   } else {
-      loadAdminUsers();
-   }
-};
-
 const handleApproveUser = async (id) => {
    if(confirm("Approve this user for platform access?")) {
       try {
@@ -785,6 +821,43 @@ const handleApproveUser = async (id) => {
       } catch(e) { alert("Failed to approve user."); }
    }
 };
+
+const showUserModal = ref(false);
+const isEditingUser = ref(false);
+const userForm = ref({ id: null, name: '', email: '', password: '', role: 'student', is_pro: false, is_approved: true });
+
+const openUserModal = (u = null) => {
+   if(u) {
+      isEditingUser.value = true;
+      userForm.value = { ...u, is_pro: !!u.is_pro, is_approved: !!u.is_approved };
+   } else {
+      isEditingUser.value = false;
+      userForm.value = { id: null, name: '', email: '', password: '', role: 'student', is_pro: false, is_approved: true };
+   }
+   showUserModal.value = true;
+};
+
+const handleUserSubmit = async () => {
+   try {
+      if(isEditingUser.value) {
+         await api.updateUser(userForm.value.id, userForm.value);
+      } else {
+         await api.createUser(userForm.value);
+      }
+      showUserModal.value = false;
+      loadAdminUsers();
+   } catch(e) { alert("Failed to save user: " + (e.response?.data?.message || e.message)); }
+};
+
+const handleDeleteUser = async (id) => {
+   if(confirm("Permanently delete this user? This cannot be undone.")) {
+      try {
+         await api.deleteUser(id);
+         loadAdminUsers();
+      } catch(e) { alert("Failed to delete user."); }
+   }
+};
+
 
 const loadCourseQuizzes = async () => {
    if(!selectedCourseForQuiz.value) return;

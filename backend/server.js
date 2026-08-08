@@ -566,6 +566,43 @@ app.put('/api/admin/users/:id/approve', verifyToken, isAdmin, async (req, res) =
     }
 });
 
+app.post('/api/admin/users', verifyToken, isAdmin, async (req, res) => {
+    try {
+        const { name, email, password, role, is_pro, is_approved } = req.body;
+        const [exists] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+        if (exists.length > 0) return res.status(400).json({ success: false, message: "Email already exists." });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.query("INSERT INTO users (name, email, password, role, is_pro, is_approved) VALUES (?, ?, ?, ?, ?, ?)", [name, email, hashedPassword, role, is_pro ? 1 : 0, is_approved ? 1 : 0]);
+        res.json({ success: true, message: "User created." });
+    } catch (error) {
+        console.error(`❌ Error in POST /admin/users:`, error.message);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.put('/api/admin/users/:id', verifyToken, isAdmin, async (req, res) => {
+    try {
+        const { name, email, role, is_pro, is_approved } = req.body;
+        await db.query("UPDATE users SET name = ?, email = ?, role = ?, is_pro = ?, is_approved = ? WHERE id = ?", [name, email, role, is_pro ? 1 : 0, is_approved ? 1 : 0, req.params.id]);
+        res.json({ success: true, message: "User updated." });
+    } catch (error) {
+        console.error(`❌ Error in PUT /admin/users/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.delete('/api/admin/users/:id', verifyToken, isAdmin, async (req, res) => {
+    try {
+        await db.query("DELETE FROM user_progress WHERE user_id = ?", [req.params.id]);
+        await db.query("DELETE FROM discussions WHERE user_id = ?", [req.params.id]);
+        await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
+        res.json({ success: true, message: "User deleted." });
+    } catch (error) {
+        console.error(`❌ Error in DELETE /admin/users/:id:`, error.message);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 app.post('/api/courses', verifyToken, isAdmin, async (req, res) => {
     try {
         await db.query("INSERT INTO courses (course_name, short_name, total_semesters) VALUES (?, ?, ?)", [req.body.course_name, req.body.short_name, req.body.total_semesters]);
