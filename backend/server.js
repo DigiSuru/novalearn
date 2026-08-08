@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const PDFDocument = require('pdfkit'); 
-const Stripe = require('stripe');      
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const db = require('./config/db');
@@ -28,7 +29,10 @@ const isAdmin = require('./middleware/adminMiddleware');
     }
 })();
 
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock');
+const razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'mock_key_id',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'mock_key_secret',
+});
 
 const app = express();
 app.set('trust proxy', 1); // CRITICAL: Fixes HTTPS protocol resolution behind Render/load balancers
@@ -413,7 +417,7 @@ app.get('/api/user/assessments/history', verifyToken, async (req, res) => {
 });
 
 // ==========================================
-// 5. STRIPE PAYMENTS & CERTIFICATES
+// 5. RAZORPAY PAYMENTS & CERTIFICATES
 // ==========================================
 
 app.post('/api/user/upgrade', verifyToken, async (req, res) => {
@@ -427,38 +431,52 @@ app.post('/api/user/upgrade', verifyToken, async (req, res) => {
     }
 });
 
-app.post('/api/payments/create-checkout-session', verifyToken, async (req, res) => {
+app.get('/api/payments/key', (req, res) => {
+    res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_mock' });
+});
+
+app.post('/api/payments/create-order', verifyToken, async (req, res) => {
     try {
-        if (!process.env.STRIPE_SECRET_KEY) {
-            return res.json({ success: true, sessionId: 'mock_session_123', url: '/pricing?success=true' });
+        if (!process.env.RAZORPAY_KEY_SECRET) {
+            return res.json({ success: true, order: { id: 'mock_order_123', amount: 49900, currency: 'INR' } });
         }
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: [{
-                price_data: {
-                    currency: 'inr',
-                    product_data: { name: 'NovaLearn Pro Elite - 1 Year' },
-                    unit_amount: 49900,
-                },
-                quantity: 1,
-            }],
-            mode: 'payment',
-            success_url: `http://localhost:5173/pricing?success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `http://localhost:5173/pricing?canceled=true`,
-            client_reference_id: req.user.id.toString()
-        });
-        res.json({ success: true, sessionId: session.id, url: session.url });
+        const options = {
+            amount: 49900, // amount in smallest currency unit (paisa for INR = 499 INR)
+            currency: 'INR',
+            receipt: `receipt_order_${req.user.id}_${Date.now()}`
+        };
+        const order = await razorpayInstance.orders.create(options);
+        res.json({ success: true, order });
     } catch (error) { 
-        console.error(`❌ Error in POST /payments/checkout:`, error.message);
+        console.error(`❌ Error in POST /payments/create-order:`, error.message);
         res.status(500).json({ success: false, message: error.message }); 
     }
 });
 
 app.post('/api/payments/verify', verifyToken, async (req, res) => {
     try {
-        await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
-        const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
-        res.json({ success: true, user: users[0] });
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        
+        // If it's a mock payment
+        if (!process.env.RAZORPAY_KEY_SECRET || razorpay_order_id === 'mock_order_123') {
+            await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
+            const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
+            return res.json({ success: true, user: users[0] });
+        }
+
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .update(body.toString())
+            .digest('hex');
+                                
+        if (expectedSignature === razorpay_signature) {
+            await db.query("UPDATE users SET is_pro = TRUE, pro_expiry = DATE_ADD(NOW(), INTERVAL 1 YEAR) WHERE id = ?", [req.user.id]);
+            const [users] = await db.query("SELECT id, name, email, role, is_pro FROM users WHERE id = ?", [req.user.id]);
+            res.json({ success: true, message: 'Payment verified', user: users[0] });
+        } else {
+            res.status(400).json({ success: false, message: 'Invalid signature' });
+        }
     } catch (error) { 
         console.error(`❌ Error in POST /payments/verify:`, error.message);
         res.status(500).json({ success: false, message: error.message }); 

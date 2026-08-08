@@ -110,10 +110,80 @@ const handleCheckout = async () => {
    loading.value = true;
    errorMessage.value = '';
    try {
-      // Calls the new Stripe endpoint
-      const response = await api.createCheckoutSession({});
-      // Redirect to Stripe checkout URL (or mock URL if env is local)
-      window.location.href = response.data.url;
+      // 1. Fetch Razorpay key
+      const keyRes = await api.getPaymentKey();
+      const razorpayKey = keyRes.data.key;
+
+      // 2. Create order
+      const orderRes = await api.createOrder({});
+      const order = orderRes.data.order;
+
+      if (order.id === 'mock_order_123') {
+         // Handle mock scenario
+         const verifyRes = await api.verifyPayment({
+             razorpay_order_id: 'mock_order_123',
+             razorpay_payment_id: 'mock_payment_123',
+             razorpay_signature: 'mock_signature'
+         });
+         if (verifyRes.data.success) {
+            user.value = verifyRes.data.user;
+            localStorage.setItem('user', JSON.stringify(verifyRes.data.user));
+            successMessage.value = "Mock payment successful! Welcome to Pro Elite.";
+            setTimeout(() => { router.push('/profile'); }, 3000);
+         }
+         loading.value = false;
+         return;
+      }
+
+      // 3. Open Razorpay Checkout
+      const options = {
+          key: razorpayKey,
+          amount: order.amount,
+          currency: order.currency,
+          name: "NovaLearn",
+          description: "Pro Elite - 1 Year Subscription",
+          order_id: order.id,
+          handler: async function (response) {
+              try {
+                  loading.value = true;
+                  const verifyRes = await api.verifyPayment({
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_signature: response.razorpay_signature
+                  });
+                  if (verifyRes.data.success) {
+                      user.value = verifyRes.data.user;
+                      localStorage.setItem('user', JSON.stringify(verifyRes.data.user));
+                      successMessage.value = "Payment verified successfully! Welcome to Pro Elite.";
+                      setTimeout(() => { router.push('/profile'); }, 3000);
+                  }
+              } catch (err) {
+                  errorMessage.value = "Payment verification failed. Please contact support.";
+                  loading.value = false;
+              }
+          },
+          prefill: {
+              name: user.value.name,
+              email: user.value.email,
+              contact: "9999999999"
+          },
+          theme: {
+              color: "#fbbf24" // amber-400
+          },
+          modal: {
+              ondismiss: function() {
+                  loading.value = false;
+                  errorMessage.value = "Checkout was canceled. Your account has not been charged.";
+              }
+          }
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.on('payment.failed', function (response){
+          errorMessage.value = response.error.description;
+          loading.value = false;
+      });
+      rzp1.open();
    } catch (error) {
       errorMessage.value = "Failed to initialize checkout. Please check the payment gateway connection.";
       loading.value = false;
@@ -123,26 +193,6 @@ const handleCheckout = async () => {
 onMounted(async () => {
    const savedUser = localStorage.getItem('user');
    if (savedUser) user.value = JSON.parse(savedUser);
-
-   // Check if returning from a successful Stripe checkout
-   if (route.query.success && route.query.session_id) {
-      loading.value = true;
-      try {
-         const res = await api.verifyPayment({ session_id: route.query.session_id });
-         user.value = res.data.user;
-         localStorage.setItem('user', JSON.stringify(res.data.user));
-         successMessage.value = "Payment verified successfully! Welcome to Pro Elite.";
-         
-         // Clean up URL and redirect to workspace
-         setTimeout(() => { router.push('/profile'); }, 3000);
-      } catch (err) {
-         errorMessage.value = "Payment verification failed. Please contact support.";
-      } finally {
-         loading.value = false;
-      }
-   } else if (route.query.canceled) {
-      errorMessage.value = "Checkout was canceled. Your account has not been charged.";
-   }
 });
 </script>
 

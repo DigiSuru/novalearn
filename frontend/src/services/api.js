@@ -81,7 +81,8 @@ export default {
     addQuestionToQuiz: (quizId, data) => apiClient.post(`/admin/quizzes/${quizId}/questions`, data),
     deleteQuiz: (quizId) => apiClient.delete(`/admin/quizzes/${quizId}`),
 
-    createCheckoutSession: (data) => apiClient.post('/payments/create-checkout-session', data),
+    getPaymentKey: () => apiClient.get('/payments/key'),
+    createOrder: (data) => apiClient.post('/payments/create-order', data),
     verifyPayment: (data) => apiClient.post('/payments/verify', data),
     recordVideoProgress: (noteId, progressData) => apiClient.post(`/user/video-progress/${noteId}`, progressData),
     getUserCertificates: () => apiClient.get('/user/certificates'),
