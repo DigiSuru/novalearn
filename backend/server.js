@@ -13,6 +13,21 @@ const db = require('./config/db');
 const verifyToken = require('./middleware/authMiddleware');
 const isAdmin = require('./middleware/adminMiddleware');
 
+// Auto-migrate users table to add is_approved column if it's missing
+(async () => {
+    try {
+        await db.query("ALTER TABLE users ADD COLUMN is_approved BOOLEAN DEFAULT FALSE;");
+        await db.query("UPDATE users SET is_approved = TRUE;");
+        console.log("✅ Auto-migration: Added is_approved column to users table.");
+    } catch (e) {
+        if (e.code === 'ER_DUP_FIELDNAME') {
+            console.log("✅ Auto-migration: is_approved column already exists.");
+        } else if (e.code !== 'ECONNREFUSED') {
+            console.error("❌ Auto-migration error:", e.message);
+        }
+    }
+})();
+
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock');
 
 const app = express();
