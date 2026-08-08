@@ -593,9 +593,13 @@ app.put('/api/admin/users/:id', verifyToken, isAdmin, async (req, res) => {
 
 app.delete('/api/admin/users/:id', verifyToken, isAdmin, async (req, res) => {
     try {
-        await db.query("DELETE FROM user_progress WHERE user_id = ?", [req.params.id]);
-        await db.query("DELETE FROM discussions WHERE user_id = ?", [req.params.id]);
-        await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
+        const userId = req.params.id;
+        await db.query("DELETE FROM enrollments WHERE user_id = ?", [userId]);
+        await db.query("DELETE FROM quiz_results WHERE user_id = ?", [userId]);
+        await db.query("DELETE FROM certificates WHERE user_id = ?", [userId]);
+        await db.query("DELETE FROM user_progress WHERE user_id = ?", [userId]);
+        await db.query("DELETE FROM discussions WHERE user_id = ?", [userId]);
+        await db.query("DELETE FROM users WHERE id = ?", [userId]);
         res.json({ success: true, message: "User deleted." });
     } catch (error) {
         console.error(`❌ Error in DELETE /admin/users/:id:`, error.message);

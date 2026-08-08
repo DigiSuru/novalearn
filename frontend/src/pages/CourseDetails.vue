@@ -711,6 +711,7 @@ onMounted(() => {
 
 /* ERROR-FREE RAW CSS FOR RICH TEXT - OPTIMIZED FOR READABILITY */
 .rich-text-container { color: #1f2937; line-height: 1.8; max-width: 850px; margin-left: auto; margin-right: auto; font-size: clamp(1rem, 2.5vw, 1.125rem); word-break: break-word; }
+.rich-text-container :deep(*:first-child) { margin-top: 0; }
 .rich-text-container :deep(h1) { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 900; color: #111827; margin-bottom: 1.25rem; margin-top: 1.5rem; letter-spacing: -0.025em; line-height: 1.2; }
 .rich-text-container :deep(h2) { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 800; color: #111827; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.3; }
 .rich-text-container :deep(h3) { font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 700; color: #1f2937; margin-bottom: 1rem; margin-top: 1.5rem; line-height: 1.4; }
