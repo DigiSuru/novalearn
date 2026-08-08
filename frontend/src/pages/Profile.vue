@@ -437,6 +437,7 @@
                          <tr>
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student</th>
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pro Status</th>
+                            <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Approval Status</th>
                             <th class="p-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">System Role</th>
                          </tr>
                       </thead>
@@ -450,8 +451,12 @@
                                <span v-if="u.is_pro" class="text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded border border-amber-100">Pro Active</span>
                                <span v-else class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Basic</span>
                             </td>
+                            <td class="p-5">
+                               <span v-if="u.is_approved" class="text-[10px] font-black text-green-600 uppercase tracking-widest bg-green-50 px-2 py-1 rounded border border-green-100 flex inline-flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> Approved</span>
+                               <span v-else class="text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded border border-amber-100 flex inline-flex items-center gap-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Pending</span>
+                            </td>
                             <td class="p-5 text-right flex items-center justify-end">
-                               <button v-if="!u.is_approved" @click="handleApproveUser(u.id)" class="text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-200 rounded-lg px-3 py-2 mr-2 hover:bg-green-600 hover:text-white transition-colors">Approve</button>
+                               <button v-if="!u.is_approved" @click="handleApproveUser(u.id)" class="text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border border-green-200 rounded-lg px-3 py-2 mr-2 hover:bg-green-600 hover:text-white transition-colors shadow-sm">Approve</button>
                                <select 
                                   v-model="u.role" 
                                   @change="handleRoleUpdate(u.id, u.role)"
