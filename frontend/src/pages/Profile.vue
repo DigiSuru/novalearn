@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50/50 pb-12 font-sans relative">
     <!-- Header -->
     <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="w-full px-6 h-16 flex items-center justify-between">
         <button @click="$router.push('/')" class="text-gray-500 hover:text-blue-600 font-bold flex items-center transition-all group">
           <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
           Dashboard
@@ -14,7 +14,7 @@
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 mt-8">
+    <main class="w-full px-6 mt-8">
       <!-- Profile Hero -->
       <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden mb-8 transition-all">
         <div class="h-56 bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden text-white">
