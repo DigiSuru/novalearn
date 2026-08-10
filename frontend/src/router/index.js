@@ -10,8 +10,13 @@ import Profile from '../pages/Profile.vue';
 import Pricing from '../pages/Pricing.vue';
 import Quiz from '../pages/Quiz.vue';
 import PendingApproval from '../pages/PendingApproval.vue';
+import Maintenance from '../pages/Maintenance.vue';
+
+// Set this to true to enable maintenance mode across the entire site
+const UNDER_MAINTENANCE = true;
 
 const routes = [
+    { path: '/maintenance', name: 'Maintenance', component: Maintenance },
     { path: '/', name: 'Home', component: Home },
     { 
         path: '/course/:id', 
@@ -76,6 +81,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    if (UNDER_MAINTENANCE && to.path !== '/maintenance') {
+        return next('/maintenance');
+    }
+    if (!UNDER_MAINTENANCE && to.path === '/maintenance') {
+        return next('/');
+    }
+
     const userStr = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     const user = userStr ? JSON.parse(userStr) : null;
